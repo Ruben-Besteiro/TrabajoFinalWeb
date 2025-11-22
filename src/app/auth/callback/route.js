@@ -1,11 +1,16 @@
 import { cookies } from "next/headers";
 
 export async function GET(request) {
-  const { searchParams } = new URL(request.url);
-  const code = searchParams.get("code");
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
 
-  const cookieStore = cookies();
-  const verifier = cookieStore.get("verifier")?.value;
+  const cookieStore = cookies();  
+  const verifierCookie = cookieStore.get("verifier");
+  const verifier = verifierCookie?.value;
+
+  if (!verifier) {
+    return new Response("Missing code verifier cookie", { status: 400 });
+  }
 
   const resp = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
