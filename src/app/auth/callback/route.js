@@ -1,4 +1,3 @@
-// src/app/auth/callback/route.js
 import { cookies } from "next/headers";
 
 export async function GET(request) {
@@ -7,13 +6,22 @@ export async function GET(request) {
     const code = url.searchParams.get("code");
     
     const cookieStore = await cookies();
+    
+    // Debug: ver si llega alguna cookie del navegador
+    const allCookies = cookieStore.getAll();
+    console.log("Todas las cookies:", allCookies);
+    
     const verifierCookie = cookieStore.get("verifier");
+    console.log("Cookie verifier:", verifierCookie);
+    
     const verifier = verifierCookie?.value;
 
-    console.log("Verifier encontrado:", !!verifier); // Debug
-
     if (!verifier) {
-      return new Response("Missing code verifier cookie", { status: 400 });
+      // Devolver más info para debug
+      return new Response(
+        `Verifier no encontrado. Cookies recibidas: ${JSON.stringify(allCookies)}`, 
+        { status: 400 }
+      );
     }
 
     const resp = await fetch("https://accounts.spotify.com/api/token", {
