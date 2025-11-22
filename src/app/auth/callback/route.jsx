@@ -1,7 +1,9 @@
 import { cookies } from "next/headers";
 
-export default async function Callback({ searchParams }) {
-  const code = searchParams.code;
+export async function GET(request) {
+  const { searchParams } = new URL(request.url);
+  const code = searchParams.get("code");
+
   const verifier = cookies().get("verifier")?.value;
 
   const resp = await fetch("https://accounts.spotify.com/api/token", {
@@ -18,12 +20,13 @@ export default async function Callback({ searchParams }) {
 
   const data = await resp.json();
 
-  // Guardar access y refresh tokens
-  const response = new Response(`
-    <html><body>Redirigiendo...</body></html>
-  `, { status: 200 });
+  // Crear la respuesta
+  const response = new Response("Redirigiendo...", { status: 302 });
 
-  response.headers.set(
+  response.headers.set("Location", "/dashboard");
+
+  // Cookies HttpOnly
+  response.headers.append(
     "Set-Cookie",
     `access_token=${data.access_token}; Path=/; HttpOnly; Secure; SameSite=Lax`
   );
@@ -32,8 +35,6 @@ export default async function Callback({ searchParams }) {
     "Set-Cookie",
     `refresh_token=${data.refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax`
   );
-
-  response.headers.set("Refresh", "0; url=/dashboard");
 
   return response;
 }
