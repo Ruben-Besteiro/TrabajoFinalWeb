@@ -44,15 +44,14 @@ export async function GET(request) {
         headers: { "Content-Type": "text/html" }
       }
     );
-    
-    // También con SameSite=None para consistencia
+
     response.headers.append(
       "Set-Cookie",
-      `access_token=${data.access_token}; Path=/; HttpOnly; Secure; SameSite=None`
+      `access_token=${data.access_token}; Path=/; HttpOnly; Secure; SameSite=Lax`
     );
     response.headers.append(
       "Set-Cookie",
-      `refresh_token=${data.refresh_token}; Path=/; HttpOnly; Secure; SameSite=None`
+      `refresh_token=${data.refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax`
     );
     response.headers.set("Refresh", "0; url=/dashboard");
     

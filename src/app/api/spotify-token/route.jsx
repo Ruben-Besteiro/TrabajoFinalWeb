@@ -26,7 +26,7 @@ export async function GET() {
     httpOnly: true,
     secure: true,
     path: "/",
-    sameSite: "none",
+    sameSite: "lax",
     maxAge: 600,
   });
 
