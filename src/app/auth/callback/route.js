@@ -4,7 +4,8 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
 
-  const verifier = cookies().get("verifier")?.value;
+  const cookieStore = cookies();
+  const verifier = cookieStore.get("verifier")?.value;
 
   const resp = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
@@ -18,25 +19,13 @@ export async function GET(request) {
     })
   });
 
-  //const data = await resp.json();
-  const txt = await resp.text();
+  const data = await resp.json();
 
-  console.log("Spotify respondió con:", txt);
+  const response = new Response(`
+    <html><body>Redirigiendo…</body></html>
+  `, { status: 200 });
 
-  let data;
-  try {
-    data = JSON.parse(txt);
-  } catch {
-    data = { error: "invalid_json", raw: txt };
-  }
-
-  // Crear la respuesta
-  const response = new Response("Redirigiendo...", { status: 302 });
-
-  response.headers.set("Location", "/dashboard");
-
-  // Cookies HttpOnly
-  response.headers.append(
+  response.headers.set(
     "Set-Cookie",
     `access_token=${data.access_token}; Path=/; HttpOnly; Secure; SameSite=Lax`
   );
@@ -45,6 +34,8 @@ export async function GET(request) {
     "Set-Cookie",
     `refresh_token=${data.refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax`
   );
+
+  response.headers.set("Refresh", "0; url=/dashboard");
 
   return response;
 }
