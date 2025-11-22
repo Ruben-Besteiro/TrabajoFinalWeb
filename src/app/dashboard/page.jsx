@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import Cancion from "../../components/Cancion";
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
@@ -9,7 +10,6 @@ export default async function Dashboard() {
     redirect("/");
   }
 
-  // Obtenemos los datos de mi cuenta
   const userResponse = await fetch("https://api.spotify.com/v1/me", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -22,7 +22,6 @@ export default async function Dashboard() {
 
   const user = await userResponse.json();
 
-  // Búsqueda de canciones
   const searchUrl = "https://api.spotify.com/v1/search?type=track&q=bohemian%20rhapsody&limit=10";
   const searchResponse = await fetch(searchUrl, {
     headers: {
@@ -37,22 +36,20 @@ export default async function Dashboard() {
     <main style={{ padding: "2rem" }}>
       <h1>¡Bienvenido, {user.display_name}!</h1>
       {user.images?.[0] && (
-        <img 
-          src={user.images[0].url} 
-          alt="Foto de perfil" 
+        <img
+          src={user.images[0].url}
+          alt="Foto de perfil"
           style={{ borderRadius: "50%", width: "100px" }}
         />
       )}
-      
       <h2 style={{ marginTop: "2rem" }}>Resultados para "Bohemian Rhapsody"</h2>
-      
       <ul style={{ listStyle: "none", padding: 0 }}>
         {tracks.map((track) => (
-          <Cancion      // Creamos un objeto nuevo por cada elemento del array
+          <Cancion
             key={track.id}
-            artista={track.artists.map(a => a.name).join(", ")}
+            artista={track.artists.map((a) => a.name).join(", ")}
             nombre={track.name}
-            imagen={track.album.images[2].url}
+            imagen={track.album.images?.[2]?.url}
           />
         ))}
       </ul>
