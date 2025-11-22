@@ -23,4 +23,13 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  background-image: url("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpaperaccess.com%2Ffull%2F9250480.jpg&f=1&nofb=1&ipt=c691e42b78b73408b7dc9c2936214afba12fc476bf7796df647f905286b03638");
+  background-position: center;
+  background-attachment: fixed;
+  font-family: "Calibri";
+  text-align: center;
+}
+
+h1 {
+  font-size: 50;
 }

@@ -9,8 +9,8 @@ const roboto = Roboto({
 export default function About() {
     return (
         <div className={`${roboto.variable} font-sans`}>
-            <h1>About Us</h1>
-            <p>We are a company that values...</p>
+            <h1>Esta página fue hecha por Rubén Besteiro Gómez</h1>
+            <h1 className="text-3xl font-bold underline text-green-500 hover:text-green-300">Tailwind</h1>
         </div>
     );
 }
