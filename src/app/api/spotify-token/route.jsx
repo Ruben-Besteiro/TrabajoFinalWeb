@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { generateCodeVerifier, generateCodeChallenge, setCookie } from "../../../lib/auth";
+import { generateCodeVerifier, generateCodeChallenge } from "../../../lib/auth";
 
 export async function GET() {
   const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
@@ -18,12 +18,17 @@ export async function GET() {
     scope: scopes,
   });
 
-  // Guardar code_verifier en cookie
   const res = NextResponse.redirect(
     `https://accounts.spotify.com/authorize?${params.toString()}`
   );
-  
-  setCookie(res, "verifier", verifier, 600);
+
+  res.cookies.set("verifier", verifier, {
+    httpOnly: true,
+    secure: true,
+    path: "/",
+    sameSite: "lax",
+    maxAge: 600,
+  });
 
   return res;
 }
