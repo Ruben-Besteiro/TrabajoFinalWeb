@@ -1,3 +1,4 @@
+// src/app/auth/callback/route.js
 import { cookies } from "next/headers";
 
 export async function GET(request) {
@@ -8,6 +9,8 @@ export async function GET(request) {
     const cookieStore = await cookies();
     const verifierCookie = cookieStore.get("verifier");
     const verifier = verifierCookie?.value;
+
+    console.log("Verifier encontrado:", !!verifier); // Debug
 
     if (!verifier) {
       return new Response("Missing code verifier cookie", { status: 400 });
@@ -27,9 +30,11 @@ export async function GET(request) {
 
     const data = await resp.json();
 
-    // Manejo de errores
     if (data.error) {
-      return new Response(`Error de Spotify: ${data.error} - ${data.error_description}`, { status: 400 });
+      return new Response(
+        `Error de Spotify: ${data.error} - ${data.error_description}`, 
+        { status: 400 }
+      );
     }
 
     const response = new Response(
@@ -40,13 +45,14 @@ export async function GET(request) {
       }
     );
     
-    response.headers.set(
+    // También con SameSite=None para consistencia
+    response.headers.append(
       "Set-Cookie",
-      `access_token=${data.access_token}; Path=/; HttpOnly; Secure; SameSite=Lax`
+      `access_token=${data.access_token}; Path=/; HttpOnly; Secure; SameSite=None`
     );
     response.headers.append(
       "Set-Cookie",
-      `refresh_token=${data.refresh_token}; Path=/; HttpOnly; Secure; SameSite=Lax`
+      `refresh_token=${data.refresh_token}; Path=/; HttpOnly; Secure; SameSite=None`
     );
     response.headers.set("Refresh", "0; url=/dashboard");
     
