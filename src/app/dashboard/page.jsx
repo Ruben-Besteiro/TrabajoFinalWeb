@@ -48,30 +48,12 @@ export default async function Dashboard() {
       
       <ul style={{ listStyle: "none", padding: 0 }}>
         {tracks.map((track) => (
-          <li 
-            key={track.id} 
-            style={{ 
-              display: "flex", 
-              alignItems: "center", 
-              gap: "1rem",
-              padding: "0.5rem 0",
-              borderBottom: "1px solid #eee"
-            }}
-          >
-            {track.album.images?.[2] && (
-              <img 
-                src={track.album.images[2].url} 
-                alt={track.album.name}
-                style={{ width: "50px", height: "50px" }}
-              />
-            )}
-            <div>
-              <strong>{track.name}</strong>
-              <p style={{ margin: 0, color: "#666" }}>
-                {track.artists.map(a => a.name).join(", ")}
-              </p>
-            </div>
-          </li>
+          <Cancion      // Creamos un objeto nuevo por cada elemento del array
+            key={track.id}
+            artista={track.artists.map(a => a.name).join(", ")}
+            nombre={track.name}
+            imagen={track.album.images[2].url}
+          />
         ))}
       </ul>
     </main>
