@@ -1,7 +1,14 @@
-import Link from "next/link"
+"use client";
 
-export default function HomePage() {
-    return <>
-        <h1><b>Bienvenido al Spotify Taste Mixer de Rubén</b></h1>
-    </>
+export default function Home() {
+  const login = () => {
+    window.location.href = "/api/spotify-token";
+  };
+
+  return (
+    <main>
+      <h1>Spotify Taste Mixer</h1>
+      <button onClick={login}>Conectar con Spotify</button>
+    </main>
+  );
 }
