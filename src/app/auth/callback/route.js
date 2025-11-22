@@ -18,7 +18,17 @@ export async function GET(request) {
     })
   });
 
-  const data = await resp.json();
+  //const data = await resp.json();
+  const txt = await resp.text();
+
+  console.log("Spotify respondió con:", txt);
+
+  let data;
+  try {
+    data = JSON.parse(txt);
+  } catch {
+    data = { error: "invalid_json", raw: txt };
+  }
 
   // Crear la respuesta
   const response = new Response("Redirigiendo...", { status: 302 });
