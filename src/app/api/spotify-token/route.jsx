@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { generateCodeVerifier, generateCodeChallenge } from "../../../lib/auth";
 
 export async function GET() {
@@ -9,6 +8,9 @@ export async function GET() {
   const verifier = generateCodeVerifier();
   const challenge = generateCodeChallenge(verifier);
 
+  // Codificamos el verifier en para luego pasarlo (si quiere funcionar)
+  const state = Buffer.from(JSON.stringify({ verifier })).toString("base64");
+
   const params = new URLSearchParams({
     response_type: "code",
     client_id: clientId,
@@ -16,19 +18,15 @@ export async function GET() {
     code_challenge_method: "S256",
     code_challenge: challenge,
     scope: scopes,
+    state: state, // Pasamos el verifier aquí
   });
 
-  const res = NextResponse.redirect(
-    `https://accounts.spotify.com/authorize?${params.toString()}`
-  );
+  const spotifyUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
 
-  res.cookies.set("verifier", verifier, {
-    httpOnly: true,
-    secure: true,
-    path: "/",
-    sameSite: "lax",
-    maxAge: 600,
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: spotifyUrl,
+    },
   });
-
-  return res;
 }
