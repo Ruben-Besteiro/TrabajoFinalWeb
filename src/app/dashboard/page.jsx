@@ -22,8 +22,9 @@ export default async function Dashboard() {
 
   const user = await userResponse.json();
 
-  // Hacemos una búsqueda fija
-  const searchUrl = "https://api.spotify.com/v1/search?type=track&q=";
+  // Hacemos una búsqueda
+  let nombre = prompt();
+  const searchUrl = `https://api.spotify.com/v1/search?type=track&q=${nombre}`;
   const searchResponse = await fetch(searchUrl, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -43,7 +44,7 @@ export default async function Dashboard() {
           style={{ borderRadius: "50%", width: "100px" }}
         />
       )}
-      <h2 style={{ marginTop: "2rem" }}>Resultados</h2>
+      <h2 style={{ marginTop: "2rem" }}>Resultados de la búsqueda</h2>
       <ul style={{ listStyle: "none", padding: 0 }}>
         {tracks.map((track) => (
           <Cancion
