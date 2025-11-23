@@ -40,6 +40,7 @@ export default function WidgetGeneros({ selectedGenres, onGenresChange }) {
       <h3 className="font-bold">Géneros</h3>
       <p className="text-sm mb-2">Seleccionados: {selectedGenres.length}/5</p>
       
+      {/* Convertimos los géneros a checkboxes */}
       <div className="max-h-48 overflow-y-auto">
         {GENRES.map((genre) => (
           <label key={genre} className="flex items-center mb-1 cursor-pointer">

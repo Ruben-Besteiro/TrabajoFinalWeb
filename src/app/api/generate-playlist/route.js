@@ -15,7 +15,7 @@ export async function POST(request) {
   let allTracks = [];
 
   // De momento solo buscamos por géneros porque es lo único que está implementado
-  for (const genre in genres) {
+  for (const genre of genres) {
     const searchUrl = `https://api.spotify.com/v1/search?type=track&q=genre:${encodeURIComponent(genre)}&limit=10`;
     
     const response = await fetch(searchUrl, {
