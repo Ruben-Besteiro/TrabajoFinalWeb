@@ -1,7 +1,7 @@
 // src/app/dashboard/page.jsx
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import DashboardClient from "../../components/DashboardClient";
+import DashboardClient from "./DashboardClient";
 
 export default async function Dashboard() {
   const cookieStore = await cookies();
