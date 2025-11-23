@@ -9,18 +9,23 @@ export default function DashboardClient({ user }) {
     return <div className="p-8">Cargando usuario...</div>;
   }
 
+  // Aquí guardamos las preferencias del usuario. Por esto es necesaria la división del dashboard (porque son hooks)
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedDecades, setSelectedDecades] = useState([]);
-  const [moodSettings, setMoodSettings] = useState({
+  /*const [moodSettings, setMoodSettings] = useState({
     energy: 50,
     valence: 50,
     danceability: 50
   });
-  const [popularityRange, setPopularityRange] = useState([0, 100]);
+  const [popularityRange, setPopularityRange] = useState([0, 100]);*/
   
+  // Cuando le damos al botón de generar playlist las canciones generadas se guardan aquí
   const [playlist, setPlaylist] = useState([]);
+
   const [loading, setLoading] = useState(false);
+
+  // Los favs (localStorage)
   const [favorites, setFavorites] = useState(() => {
     if (typeof window !== 'undefined') {
       return JSON.parse(localStorage.getItem('favorite_tracks') || '[]');
@@ -39,8 +44,8 @@ export default function DashboardClient({ user }) {
           artists: selectedArtists,
           genres: selectedGenres,
           decades: selectedDecades,
-          mood: moodSettings,
-          popularity: popularityRange
+          /*mood: moodSettings,
+          popularity: popularityRange*/
         })
       });
       
@@ -53,12 +58,12 @@ export default function DashboardClient({ user }) {
     }
   };
 
-  // Función para eliminar track
+  // Función para eliminar track (por si en la playlist que se ha generado hay alguno que no me gusta)
   const removeTrack = (trackId) => {
     setPlaylist(playlist.filter(track => track.id !== trackId));
   };
 
-  // Función para marcar/desmarcar favorito
+  // Función para marcar/desmarcar favorito (este persiste en localStorage)
   const toggleFavorite = (track) => {
     const isFavorite = favorites.find(f => f.id === track.id);
     let updatedFavorites;
@@ -82,13 +87,12 @@ export default function DashboardClient({ user }) {
       <aside className="w-72 border-r border-gray-300 pr-5">
         <div>
           <h1 className="text-2xl">Hola, {user.display_name}!</h1>
-          {user.images?.[0] && (
-            <img src={user.images[0].url} alt="Perfil" className="w-20 rounded-full" />
-          )}
         </div>
 
         <h2 className="text-xl mt-4">Configuración</h2>
         
+        {/* Esto de aquí son los widgets (lado izquierdo) */}
+
         <div className="mb-4 p-3 border border-gray-300">
           <h3 className="font-bold">Artistas</h3>
           <p>Seleccionados: {selectedArtists.length}</p>
@@ -110,6 +114,8 @@ export default function DashboardClient({ user }) {
           <p>Seleccionadas: {selectedDecades.length}</p>
         </div>
 
+        {/* Botón de generar playlist */}
+
         <button 
           onClick={generatePlaylist} 
           disabled={loading}
@@ -118,6 +124,9 @@ export default function DashboardClient({ user }) {
           {loading ? 'Generando...' : 'Generar Playlist'}
         </button>
       </aside>
+
+
+      {/* Y esta es la sección donde va la playlist generada (lado derecho) */}
 
       <main className="flex-1">
         <div className="flex justify-between mb-3">
@@ -142,34 +151,15 @@ export default function DashboardClient({ user }) {
         ) : (
           <ul className="list-none p-0">
             {playlist.map((track) => (
-              <li key={track.id} className="flex p-3 border-b border-gray-200">
-                {track.album?.images?.[2] && (
-                  <img src={track.album.images[2].url} alt={track.name} className="w-12 h-12" />
-                )}
-                
-                <div className="flex-1 ml-3">
-                  <div className="font-bold">{track.name}</div>
-                  <div className="text-gray-600">
-                    {track.artists?.map(a => a.name).join(', ')}
-                  </div>
-                </div>
-
-                <div>
-                  <button 
-                    onClick={() => toggleFavorite(track)}
-                    className="bg-transparent border-0 text-xl"
-                  >
-                    {isFavorite(track.id) ? '⭐' : '☆'}
-                  </button>
-                  
-                  <button 
-                    onClick={() => removeTrack(track.id)}
-                    className="bg-transparent border-0 text-xl"
-                  >
-                    ❌
-                  </button>
-                </div>
-              </li>
+              <Cancion
+                key={track.id}
+                artista={track.artists?.map(a => a.name).join(', ')}
+                nombre={track.name}
+                imagen={track.album?.images?.[2]?.url}
+                onFavorite={() => toggleFavorite(track)}
+                onRemove={() => removeTrack(track.id)}
+                isFavorite={isFavorite(track.id)}
+              />
             ))}
           </ul>
         )}

@@ -1,22 +1,29 @@
-export default function Cancion({ artista, nombre, imagen }) {
+export default function Cancion({ artista, nombre, imagen, onFavorite, onRemove, isFavorite }) {
   return (
-    <li
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "1rem",
-        padding: "0.5rem 0",
-        borderBottom: "1px solid #eee",
-      }}
-    >
+    <li className="flex items-center p-3 border-b border-gray-200">
       {imagen && (
-        <img src={imagen} alt={nombre} style={{ width: "50px", height: "50px" }} />
+        <img src={imagen} alt={nombre} className="w-12 h-12" />
       )}
+      
+      <div className="flex-1 ml-3">
+        <div className="font-bold">{nombre}</div>
+        <div className="text-gray-600">{artista}</div>
+      </div>
+
       <div>
-        <b>{nombre}</b>
-        <p style={{ margin: 0, color: "#666" }}>
-            {artista}
-        </p>
+        <button 
+          onClick={onFavorite}
+          className="bg-transparent border-0 text-xl"
+        >
+          {isFavorite ? '⭐' : '☆'}
+        </button>
+        
+        <button 
+          onClick={onRemove}
+          className="bg-transparent border-0 text-xl"
+        >
+          ❌
+        </button>
       </div>
     </li>
   );

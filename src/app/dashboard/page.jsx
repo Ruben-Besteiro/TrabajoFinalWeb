@@ -1,6 +1,6 @@
 // src/app/dashboard/page.jsx
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { router } from "next/navigation";
 import DashboardClient from "./DashboardClient";
 
 export default async function Dashboard() {
@@ -8,7 +8,7 @@ export default async function Dashboard() {
   const accessToken = cookieStore.get("access_token")?.value;
 
   if (!accessToken) {
-    redirect("/");
+    router.push("/");
   }
 
   const userResponse = await fetch("https://api.spotify.com/v1/me", {
@@ -18,10 +18,11 @@ export default async function Dashboard() {
   });
 
   if (!userResponse.ok) {
-    redirect("/");
+    router.push("/");
   }
 
   const user = await userResponse.json();
 
+  // La parte del cliente debe ir en otro componente y meterle "use client"
   return <DashboardClient user={user} />;
 }
