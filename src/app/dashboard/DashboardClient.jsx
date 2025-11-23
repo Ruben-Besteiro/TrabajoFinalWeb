@@ -2,6 +2,7 @@
 // Es necesario dividir el dashboard en 2 componentes para poder usar botones aquí
 
 import { useState } from 'react';
+import WidgetGeneros from '../../components/WidgetGeneros';
 
 export default function DashboardClient({ user }) {
   // Verificar que user existe
@@ -35,6 +36,11 @@ export default function DashboardClient({ user }) {
 
   // Función para generar playlist
   const generatePlaylist = async () => {
+    if (selectedGenres.length === 0) {
+      alert('Selecciona al menos un género');
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch('/api/generate-playlist', {
@@ -101,13 +107,10 @@ export default function DashboardClient({ user }) {
           </button>
         </div>
 
-        <div className="mb-4 p-3 border border-gray-300">
-          <h3 className="font-bold">Géneros</h3>
-          <p>Seleccionados: {selectedGenres.length}</p>
-          <button className="w-full p-2 bg-green-500 text-white mt-2">
-            Elegir Géneros
-          </button>
-        </div>
+        <WidgetGeneros 
+            selectedGenres={selectedGenres}
+            onGenresChange={setSelectedGenres}
+        />
 
         <div className="mb-4 p-3 border border-gray-300">
           <h3 className="font-bold">Décadas</h3>
