@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import WidgetGeneros from '../../components/WidgetGeneros';
+import Cancion from '../../components/Cancion';
 
 export default function DashboardClient({ user }) {
   // Verificar que user existe
