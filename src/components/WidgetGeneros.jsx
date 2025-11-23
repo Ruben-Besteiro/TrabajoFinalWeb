@@ -1,38 +1,28 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+const GENRES = [
+  "acoustic", "afrobeat", "alt-rock", "alternative", "ambient", "anime",
+  "black-metal", "bluegrass", "blues", "bossanova", "brazil", "breakbeat",
+  "british", "cantopop", "chicago-house", "children", "chill", "classical",
+  "club", "comedy", "country", "dance", "dancehall", "death-metal", "deep-house",
+  "detroit-techno", "disco", "disney", "drum-and-bass", "dub", "dubstep",
+  "edm", "electro", "electronic", "emo", "folk", "forro", "french", "funk",
+  "garage", "german", "gospel", "goth", "grindcore", "groove", "grunge",
+  "guitar", "happy", "hard-rock", "hardcore", "hardstyle", "heavy-metal",
+  "hip-hop", "holidays", "honky-tonk", "house", "idm", "indian", "indie",
+  "indie-pop", "industrial", "iranian", "j-dance", "j-idol", "j-pop", "j-rock",
+  "jazz", "k-pop", "kids", "latin", "latino", "malay", "mandopop", "metal",
+  "metal-misc", "metalcore", "minimal-techno", "movies", "mpb", "new-age",
+  "new-release", "opera", "pagode", "party", "philippines-opm", "piano", "pop",
+  "pop-film", "post-dubstep", "power-pop", "progressive-house", "psych-rock",
+  "punk", "punk-rock", "r-n-b", "rainy-day", "reggae", "reggaeton", "road-trip",
+  "rock", "rock-n-roll", "rockabilly", "romance", "sad", "salsa", "samba",
+  "sertanejo", "show-tunes", "singer-songwriter", "ska", "sleep", "songwriter",
+  "soul", "soundtracks", "spanish", "study", "summer", "swedish", "synth-pop",
+  "tango", "techno", "trance", "trip-hop", "turkish", "work-out", "world-music"
+];
 
 export default function WidgetGeneros({ selectedGenres, onGenresChange }) {
-  const [availableGenres, setAvailableGenres] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Primero hacemos una llamada a la API de Spotify para obtener los géneros
-    const fetchGenres = async () => {
-      try {
-        const response = await fetch('/api/genres');        // Llamamos a la API route de géneros
-
-        if (!response.ok) {
-          console.error('Error response:', response.status, response.statusText);
-          const text = await response.text();
-          console.error('Response body:', text);
-          setLoading(false);
-          return;
-        }
-
-        const data = await response.json();
-        setAvailableGenres(data.genres || []);
-      } catch (error) {
-        console.error('Error obteniendo géneros:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGenres();
-  }, []);
-
-  // Aquí metemos o quitamos géneros de la selección
   const toggleGenre = (genre) => {
     if (selectedGenres.includes(genre)) {
       onGenresChange(selectedGenres.filter(g => g !== genre));
@@ -45,22 +35,13 @@ export default function WidgetGeneros({ selectedGenres, onGenresChange }) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="mb-4 p-3 border border-gray-300">
-        <h3 className="font-bold">Géneros</h3>
-        <p className="text-sm">Cargando géneros...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="mb-4 p-3 border border-gray-300">
       <h3 className="font-bold">Géneros</h3>
       <p className="text-sm mb-2">Seleccionados: {selectedGenres.length}/5</p>
       
       <div className="max-h-48 overflow-y-auto">
-        {availableGenres.map((genre) => (
+        {GENRES.map((genre) => (
           <label key={genre} className="flex items-center mb-1 cursor-pointer">
             <input
               type="checkbox"
