@@ -11,6 +11,15 @@ export default function WidgetGeneros({ selectedGenres, onGenresChange }) {
     const fetchGenres = async () => {
       try {
         const response = await fetch('/api/genres');        // Llamamos a la API route de géneros
+
+        if (!response.ok) {
+          console.error('Error response:', response.status, response.statusText);
+          const text = await response.text();
+          console.error('Response body:', text);
+          setLoading(false);
+          return;
+        }
+
         const data = await response.json();
         setAvailableGenres(data.genres || []);
       } catch (error) {
