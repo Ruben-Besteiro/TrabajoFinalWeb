@@ -10,13 +10,12 @@ export async function POST(request) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   }
 
-  const { genres } = await request.json();
-
+  const { genres, years } = await request.json();
   let allTracks = [];
 
-  // De momento solo buscamos por géneros porque es lo único que está implementado
+  // Buscamos por géneros
   for (const genre of genres) {
-    const searchUrl = `https://api.spotify.com/v1/search?type=track&q=genre:${encodeURIComponent(genre)}&limit=10`;
+    const searchUrl = `https://api.spotify.com/v1/search?type=track&q=genre:${encodeURIComponent(genre)}&limit=9999999999999999999999999999999999999999999999999`;
     
     const response = await fetch(searchUrl, {
       headers: {
@@ -28,6 +27,15 @@ export async function POST(request) {
     if (data.tracks?.items) {
       allTracks = [...allTracks, ...data.tracks.items];
     }
+  }
+
+  // Los resultados de la llamada a la API los filtramos por año
+  if (years) {
+    allTracks = allTracks.filter(track => {
+      if (!track.album?.release_date) return false;
+      const trackYear = parseInt(track.album.release_date.substring(0, 4));
+      return (trackYear >= years[0] && trackYear <= years[1]);
+    });
   }
 
   // Eliminar duplicados por ID
