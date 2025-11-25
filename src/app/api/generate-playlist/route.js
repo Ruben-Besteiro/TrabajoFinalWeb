@@ -15,7 +15,7 @@ export async function POST(request) {
 
   // Buscamos por géneros
   for (const genre of genres) {
-    const searchUrl = `https://api.spotify.com/v1/search?type=track&q=genre:${encodeURIComponent(genre)}&limit=9999999999999999999999999999999999999999999999999`;
+    const searchUrl = `https://api.spotify.com/v1/search?type=track&q=genre:${encodeURIComponent(genre)}&limit=50`;
     
     const response = await fetch(searchUrl, {
       headers: {
@@ -29,12 +29,12 @@ export async function POST(request) {
     }
   }
 
-  // Los resultados de la llamada a la API los filtramos por año
-  if (years) {
+  // Filtrar por año si se especificó
+  if (years && years.length === 2) {
     allTracks = allTracks.filter(track => {
       if (!track.album?.release_date) return false;
       const trackYear = parseInt(track.album.release_date.substring(0, 4));
-      return (trackYear >= years[0] && trackYear <= years[1]);
+      return trackYear >= years[0] && trackYear <= years[1];
     });
   }
 
@@ -43,5 +43,8 @@ export async function POST(request) {
     new Map(allTracks.map(track => [track.id, track])).values()
   );
 
-  return NextResponse.json({ tracks: uniqueTracks });
+  // Limitar a 50 canciones
+  const limitedTracks = uniqueTracks.slice(0, 50);
+
+  return NextResponse.json({ tracks: limitedTracks });
 }
