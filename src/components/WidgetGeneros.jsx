@@ -25,13 +25,13 @@ const GENRES = [
 export default function WidgetGeneros({ selectedGenres, onGenresChange }) {
   const toggleGenre = (genre) => {
     if (selectedGenres.includes(genre)) {
-      onGenresChange(selectedGenres.filter(g => g !== genre));
+      onGenresChange(selectedGenres.filter(g => g !== genre));      // Si el género ya está lo quitamos
     } else {
       if (selectedGenres.length >= 5) {
         alert('Máximo 5 géneros');
         return;
       }
-      onGenresChange([...selectedGenres, genre]);
+      onGenresChange([...selectedGenres, genre]);   // Y si no lo añadimos al estado
     }
   };
 

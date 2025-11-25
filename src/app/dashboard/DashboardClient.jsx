@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import WidgetGeneros from '../../components/WidgetGeneros';
+import WidgetAgnos from '../../components/WidgetAgnos';
 import Cancion from '../../components/Cancion';
 
 export default function DashboardClient({ user }) {
@@ -14,7 +15,7 @@ export default function DashboardClient({ user }) {
   // Aquí guardamos las preferencias del usuario. Por esto es necesaria la división del dashboard (porque son hooks)
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
-  const [selectedDecades, setSelectedDecades] = useState([]);
+  const [selectedYears, setSelectedYears] = useState([1950, 2025]);
   /*const [moodSettings, setMoodSettings] = useState({
     energy: 50,
     valence: 50,
@@ -50,7 +51,7 @@ export default function DashboardClient({ user }) {
         body: JSON.stringify({
           artists: selectedArtists,
           genres: selectedGenres,
-          decades: selectedDecades,
+          years: selectedYears, // ← Añade esto
           /*mood: moodSettings,
           popularity: popularityRange*/
         })
@@ -113,10 +114,10 @@ export default function DashboardClient({ user }) {
             onGenresChange={setSelectedGenres}
         />
 
-        <div className="mb-4 p-3 border border-gray-300">
-          <h3 className="font-bold">Décadas</h3>
-          <p>Seleccionadas: {selectedDecades.length}</p>
-        </div>
+        <WidgetAgnos 
+          selectedYears={selectedYears}
+          onYearsChange={setSelectedYears}
+        />
 
         {/* Botón de generar playlist */}
 
