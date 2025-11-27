@@ -15,7 +15,7 @@ export async function POST(request) {
 
   // Buscamos por géneros
   for (const genre of genres) {
-    const searchUrl = `https://api.spotify.com/v1/search?type=track&q=genre:${encodeURIComponent(genre)}&limit=50`;
+    const searchUrl = `https://api.spotify.com/v1/search?type=track&q=genre:${encodeURIComponent(genre)}`;
     
     const response = await fetch(searchUrl, {
       headers: {
@@ -44,7 +44,7 @@ export async function POST(request) {
   );
 
   // Limitar a 50 canciones
-  const limitedTracks = uniqueTracks.slice(0, 50);
+  const limitedTracks = uniqueTracks.slice(0, 100);
 
   return NextResponse.json({ tracks: limitedTracks });
 }

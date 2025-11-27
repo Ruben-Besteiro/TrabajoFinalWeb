@@ -1,13 +1,12 @@
 'use client';
 // Es necesario dividir el dashboard en 2 componentes para poder usar botones aquí
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import WidgetGeneros from '../../components/WidgetGeneros';
 import WidgetAgnos from '../../components/WidgetAgnos';
 import Cancion from '../../components/Cancion';
 
 export default function DashboardClient({ user }) {
-  // Verificar que user existe
   if (!user) {
     return <div className="p-8">Cargando usuario...</div>;
   }
@@ -25,7 +24,6 @@ export default function DashboardClient({ user }) {
   
   // Cuando le damos al botón de generar playlist las canciones generadas se guardan aquí
   const [playlist, setPlaylist] = useState([]);
-
   const [loading, setLoading] = useState(false);
 
   // Los favs (localStorage)
@@ -35,6 +33,11 @@ export default function DashboardClient({ user }) {
     }
     return [];
   });
+
+  // Cargar favoritos en la playlist al inicio
+  useEffect(() => {
+    setPlaylist(favorites);
+  }, []); // Solo se ejecuta una vez al montar
 
   // Función para generar playlist
   const generatePlaylist = async () => {
@@ -51,14 +54,21 @@ export default function DashboardClient({ user }) {
         body: JSON.stringify({
           artists: selectedArtists,
           genres: selectedGenres,
-          years: selectedYears, // ← Añade esto
+          years: selectedYears,
           /*mood: moodSettings,
           popularity: popularityRange*/
         })
       });
       
       const data = await response.json();
-      setPlaylist(data.tracks || []);
+      const newTracks = data.tracks || [];
+      
+      // Combinar favoritos con las nuevas canciones
+      // Primero los favoritos, luego las nuevas (sin duplicados)
+      const favoriteIds = new Set(favorites.map(f => f.id));
+      const nonFavoriteTracks = newTracks.filter(track => !favoriteIds.has(track.id));
+      
+      setPlaylist([...favorites, ...nonFavoriteTracks]);
     } catch (error) {
       console.error('Error generando playlist:', error);
     } finally {
@@ -77,13 +87,21 @@ export default function DashboardClient({ user }) {
     let updatedFavorites;
     
     if (isFavorite) {
+      // Quitar de favoritos
       updatedFavorites = favorites.filter(f => f.id !== track.id);
     } else {
+      // Añadir a favoritos
       updatedFavorites = [...favorites, track];
     }
     
     setFavorites(updatedFavorites);
     localStorage.setItem('favorite_tracks', JSON.stringify(updatedFavorites));
+    
+    // Actualizar la playlist para reflejar el cambio
+    // Si añadimos favorito y no está en playlist, lo añadimos al principio
+    if (!isFavorite && !playlist.find(p => p.id === track.id)) {
+      setPlaylist([track, ...playlist]);
+    }
   };
 
   const isFavorite = (trackId) => {
@@ -100,7 +118,6 @@ export default function DashboardClient({ user }) {
         <h2 className="text-xl mt-4">Configuración</h2>
         
         {/* Esto de aquí son los widgets (lado izquierdo) */}
-
         <div className="mb-4 p-3 border border-gray-300">
           <h3 className="font-bold">Artistas</h3>
           <p>Seleccionados: {selectedArtists.length}</p>
@@ -120,7 +137,6 @@ export default function DashboardClient({ user }) {
         />
 
         {/* Botón de generar playlist */}
-
         <button 
           onClick={generatePlaylist} 
           disabled={loading}
@@ -130,12 +146,14 @@ export default function DashboardClient({ user }) {
         </button>
       </aside>
 
-
       {/* Y esta es la sección donde va la playlist generada (lado derecho) */}
-
       <main className="flex-1">
         <div className="flex justify-between mb-3">
-          <h2 className="text-2xl">Tu Playlist ({playlist.length})</h2>
+          <h2 className="text-2xl">
+            {playlist.length === favorites.length && playlist.length > 0 
+              ? `Tus Favoritos (${playlist.length})` 
+              : `Tu Playlist (${playlist.length})`}
+          </h2>
           
           {playlist.length > 0 && (
             <div>
@@ -151,7 +169,7 @@ export default function DashboardClient({ user }) {
 
         {playlist.length === 0 ? (
           <div className="text-center p-12 border-2 border-dashed border-gray-300">
-            <p>Configura tus preferencias y genera una playlist</p>
+            <p>No tienes favoritos aún. Genera una playlist y marca tus canciones favoritas ⭐</p>
           </div>
         ) : (
           <ul className="list-none p-0">
