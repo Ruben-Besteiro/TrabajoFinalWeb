@@ -57,6 +57,7 @@ export default function DashboardClient({ user }) {
           artists: selectedArtists,
           genres: selectedGenres,
           years: selectedYears,
+          tracks: selectedTracks,
           /*mood: moodSettings,
           popularity: popularityRange*/
         })
