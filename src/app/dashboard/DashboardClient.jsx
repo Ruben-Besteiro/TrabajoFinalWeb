@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import WidgetGeneros from '../../components/WidgetGeneros';
 import WidgetAgnos from '../../components/WidgetAgnos';
+import WidgetTracks from '../../components/WidgetTracks';
 import Cancion from '../../components/Cancion';
 
 export default function DashboardClient({ user }) {
