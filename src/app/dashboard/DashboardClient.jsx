@@ -17,12 +17,6 @@ export default function DashboardClient({ user }) {
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedYears, setSelectedYears] = useState([1950, 2025]);
-  /*const [moodSettings, setMoodSettings] = useState({
-    energy: 50,
-    valence: 50,
-    danceability: 50
-  });
-  const [popularityRange, setPopularityRange] = useState([0, 100]);*/
   
   // Cuando le damos al botón de generar playlist las canciones generadas se guardan aquí
   const [playlist, setPlaylist] = useState([]);
@@ -41,6 +35,21 @@ export default function DashboardClient({ user }) {
     setPlaylist(favorites);
   }, []); // Solo se ejecuta una vez al montar
 
+  // NUEVO: Cuando cambian las canciones seleccionadas, añadirlas a la playlist
+  useEffect(() => {
+    // Combinar favoritos con las canciones seleccionadas
+    const favoriteIds = new Set(favorites.map(f => f.id));
+    const selectedIds = new Set(selectedTracks.map(t => t.id));
+    
+    // Obtener las canciones de la playlist que no son favoritas ni seleccionadas
+    const otherTracks = playlist.filter(track => 
+      !favoriteIds.has(track.id) && !selectedIds.has(track.id)
+    );
+    
+    // Nueva playlist: favoritos + seleccionadas + otras
+    setPlaylist([...favorites, ...selectedTracks, ...otherTracks]);
+  }, [selectedTracks, favorites]);
+
   // Función para generar playlist
   const generatePlaylist = async () => {
     if (selectedGenres.length === 0) {
@@ -54,24 +63,24 @@ export default function DashboardClient({ user }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          tracks: selectedTracks,
           artists: selectedArtists,
           genres: selectedGenres,
           years: selectedYears,
-          tracks: selectedTracks,
-          /*mood: moodSettings,
-          popularity: popularityRange*/
         })
       });
       
       const data = await response.json();
       const newTracks = data.tracks || [];
       
-      // Combinar favoritos con las nuevas canciones
-      // Primero los favoritos, luego las nuevas (sin duplicados)
+      // Combinar favoritos + seleccionadas + nuevas (sin duplicados)
       const favoriteIds = new Set(favorites.map(f => f.id));
-      const nonFavoriteTracks = newTracks.filter(track => !favoriteIds.has(track.id));
+      const selectedIds = new Set(selectedTracks.map(t => t.id));
+      const nonDuplicateTracks = newTracks.filter(track => 
+        !favoriteIds.has(track.id) && !selectedIds.has(track.id)
+      );
       
-      setPlaylist([...favorites, ...nonFavoriteTracks]);
+      setPlaylist([...favorites, ...selectedTracks, ...nonDuplicateTracks]);
     } catch (error) {
       console.error('Error generando playlist:', error);
     } finally {
@@ -82,6 +91,8 @@ export default function DashboardClient({ user }) {
   // Función para eliminar track (por si en la playlist que se ha generado hay alguno que no me gusta)
   const removeTrack = (trackId) => {
     setPlaylist(playlist.filter(track => track.id !== trackId));
+    // También quitarlo de selectedTracks si estaba ahí
+    setSelectedTracks(selectedTracks.filter(track => track.id !== trackId));
   };
 
   // Función para marcar/desmarcar favorito (este persiste en localStorage)
@@ -177,7 +188,7 @@ export default function DashboardClient({ user }) {
 
         {playlist.length === 0 ? (
           <div className="text-center p-12 border-2 border-dashed border-gray-300">
-            <p>No tienes favoritos aún. Genera una playlist y marca tus canciones favoritas ⭐</p>
+            <p>No tienes favoritos aún. Busca y selecciona canciones o genera una playlist ⭐</p>
           </div>
         ) : (
           <ul className="list-none p-0">
