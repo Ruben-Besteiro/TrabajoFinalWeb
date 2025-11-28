@@ -12,6 +12,7 @@ export default function DashboardClient({ user }) {
   }
 
   // Aquí guardamos las preferencias del usuario. Por esto es necesaria la división del dashboard (porque son hooks)
+  const [selectedTracks, setSelectedTracks] = useState([]);
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedYears, setSelectedYears] = useState([1950, 2025]);
@@ -125,6 +126,11 @@ export default function DashboardClient({ user }) {
             Buscar Artistas
           </button>
         </div>
+
+        <WidgetTracks 
+          selectedTracks={selectedTracks}
+          onTracksChange={setSelectedTracks}
+        />
 
         <WidgetGeneros 
             selectedGenres={selectedGenres}
