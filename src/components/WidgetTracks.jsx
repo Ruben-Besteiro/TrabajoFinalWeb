@@ -96,30 +96,6 @@ export default function WidgetTracks({ selectedTracks, onTracksChange }) {
           ))}
         </div>
       )}
-
-      {selectedTracks.length > 0 && (
-        <div className="mt-2 border-t pt-2">
-          <p className="text-xs font-bold mb-1">Seleccionadas:</p>
-          {selectedTracks.map((track) => (
-            <div key={track.id} className="flex items-center gap-2 mb-1">
-              {track.album?.images?.[2] && (
-                <img 
-                  src={track.album.images[2].url} 
-                  alt={track.name}
-                  className="w-6 h-6"
-                />
-              )}
-              <span className="text-xs flex-1">{track.name}</span>
-              <button
-                onClick={() => toggleTrack(track)}
-                className="text-xs"
-              >
-                ❌
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
