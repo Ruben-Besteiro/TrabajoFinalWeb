@@ -28,6 +28,7 @@ export default function WidgetTracks({ selectedTracks, onTracksChange }) {
     }
   };
 
+  {/* Aquí es donde añadimos o quitamos canciones manualmente */}
   const toggleTrack = (track) => {
     const isSelected = selectedTracks.find(t => t.id === track.id);
     

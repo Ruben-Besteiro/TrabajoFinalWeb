@@ -5,50 +5,77 @@ import { useState, useEffect } from 'react';
 import WidgetGeneros from '../../components/WidgetGeneros';
 import WidgetAgnos from '../../components/WidgetAgnos';
 import WidgetTracks from '../../components/WidgetTracks';
+import WidgetArtistas from '../../components/WidgetArtistas';
 import Cancion from '../../components/Cancion';
+import Artista from '../../components/Artista';
 
 export default function DashboardClient({ user }) {
   if (!user) {
     return <div className="p-8">Cargando usuario...</div>;
   }
 
-  // Aquí guardamos las preferencias del usuario. Por esto es necesaria la división del dashboard (porque son hooks)
+  // Aquí guardamos las preferencias del usuario
   const [selectedTracks, setSelectedTracks] = useState([]);
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [selectedYears, setSelectedYears] = useState([1950, 2025]);
   
-  // Cuando le damos al botón de generar playlist las canciones generadas se guardan aquí
-  const [playlist, setPlaylist] = useState([]);
+  // Playlist combinada (canciones y artistas)
+  const [playlistItems, setPlaylistItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Los favs (localStorage)
-  const [favorites, setFavorites] = useState(() => {
+  // Favoritos por tipo (localStorage)
+  const [favoriteTracks, setFavoriteTracks] = useState(() => {
     if (typeof window !== 'undefined') {
       return JSON.parse(localStorage.getItem('favorite_tracks') || '[]');
     }
     return [];
   });
 
+  const [favoriteArtists, setFavoriteArtists] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return JSON.parse(localStorage.getItem('favorite_artists') || '[]');
+    }
+    return [];
+  });
+
   // Cargar favoritos en la playlist al inicio
   useEffect(() => {
-    setPlaylist(favorites);
-  }, []); // Solo se ejecuta una vez al montar
+    const favoriteTracksWithType = favoriteTracks.map(track => ({ ...track, type: 'track' }));
+    const favoriteArtistsWithType = favoriteArtists.map(artist => ({ ...artist, type: 'artist' }));
+    setPlaylistItems([...favoriteTracksWithType, ...favoriteArtistsWithType]);
+  }, []);
 
-  // NUEVO: Cuando cambian las canciones seleccionadas, añadirlas a la playlist
+  // Cuando cambian las canciones o artistas seleccionados, añadirlos a la playlist
   useEffect(() => {
-    // Combinar favoritos con las canciones seleccionadas
-    const favoriteIds = new Set(favorites.map(f => f.id));
-    const selectedIds = new Set(selectedTracks.map(t => t.id));
+    const favoriteTrackIds = new Set(favoriteTracks.map(f => f.id));
+    const favoriteArtistIds = new Set(favoriteArtists.map(f => f.id));
+    const selectedTrackIds = new Set(selectedTracks.map(t => t.id));
+    const selectedArtistIds = new Set(selectedArtists.map(a => a.id));
     
-    // Obtener las canciones de la playlist que no son favoritas ni seleccionadas
-    const otherTracks = playlist.filter(track => 
-      !favoriteIds.has(track.id) && !selectedIds.has(track.id)
-    );
+    // Obtener items que no son favoritos ni seleccionados
+    const otherItems = playlistItems.filter(item => {
+      if (item.type === 'track') {
+        return !favoriteTrackIds.has(item.id) && !selectedTrackIds.has(item.id);
+      } else {
+        return !favoriteArtistIds.has(item.id) && !selectedArtistIds.has(item.id);
+      }
+    });
     
-    // Nueva playlist: favoritos + seleccionadas + otras
-    setPlaylist([...favorites, ...selectedTracks, ...otherTracks]);
-  }, [selectedTracks, favorites]);
+    // Nueva playlist: favoritos + seleccionados + otros
+    const favoriteTracksWithType = favoriteTracks.map(track => ({ ...track, type: 'track' }));
+    const favoriteArtistsWithType = favoriteArtists.map(artist => ({ ...artist, type: 'artist' }));
+    const selectedTracksWithType = selectedTracks.map(track => ({ ...track, type: 'track' }));
+    const selectedArtistsWithType = selectedArtists.map(artist => ({ ...artist, type: 'artist' }));
+    
+    setPlaylistItems([
+      ...favoriteTracksWithType,
+      ...favoriteArtistsWithType,
+      ...selectedTracksWithType,
+      ...selectedArtistsWithType,
+      ...otherItems
+    ]);
+  }, [selectedTracks, selectedArtists, favoriteTracks, favoriteArtists]);
 
   // Función para generar playlist
   const generatePlaylist = async () => {
@@ -71,16 +98,30 @@ export default function DashboardClient({ user }) {
       });
       
       const data = await response.json();
-      const newTracks = data.tracks || [];
+      const newTracks = (data.tracks || []).map(track => ({ ...track, type: 'track' }));
       
-      // Combinar favoritos + seleccionadas + nuevas (sin duplicados)
-      const favoriteIds = new Set(favorites.map(f => f.id));
-      const selectedIds = new Set(selectedTracks.map(t => t.id));
-      const nonDuplicateTracks = newTracks.filter(track => 
-        !favoriteIds.has(track.id) && !selectedIds.has(track.id)
+      // Combinar favoritos + seleccionados + nuevos (sin duplicados)
+      const favoriteTrackIds = new Set(favoriteTracks.map(f => f.id));
+      const favoriteArtistIds = new Set(favoriteArtists.map(f => f.id));
+      const selectedTrackIds = new Set(selectedTracks.map(t => t.id));
+      const selectedArtistIds = new Set(selectedArtists.map(a => a.id));
+      
+      const nonDuplicateTracks = newTracks.filter(item => 
+        !favoriteTrackIds.has(item.id) && !selectedTrackIds.has(item.id)
       );
       
-      setPlaylist([...favorites, ...selectedTracks, ...nonDuplicateTracks]);
+      const favoriteTracksWithType = favoriteTracks.map(track => ({ ...track, type: 'track' }));
+      const favoriteArtistsWithType = favoriteArtists.map(artist => ({ ...artist, type: 'artist' }));
+      const selectedTracksWithType = selectedTracks.map(track => ({ ...track, type: 'track' }));
+      const selectedArtistsWithType = selectedArtists.map(artist => ({ ...artist, type: 'artist' }));
+      
+      setPlaylistItems([
+        ...favoriteTracksWithType,
+        ...favoriteArtistsWithType,
+        ...selectedTracksWithType,
+        ...selectedArtistsWithType,
+        ...nonDuplicateTracks
+      ]);
     } catch (error) {
       console.error('Error generando playlist:', error);
     } finally {
@@ -88,38 +129,61 @@ export default function DashboardClient({ user }) {
     }
   };
 
-  // Función para eliminar track (por si en la playlist que se ha generado hay alguno que no me gusta)
-  const removeTrack = (trackId) => {
-    setPlaylist(playlist.filter(track => track.id !== trackId));
-    // También quitarlo de selectedTracks si estaba ahí
-    setSelectedTracks(selectedTracks.filter(track => track.id !== trackId));
-  };
-
-  // Función para marcar/desmarcar favorito (este persiste en localStorage)
-  const toggleFavorite = (track) => {
-    const isFavorite = favorites.find(f => f.id === track.id);
-    let updatedFavorites;
+  // Función para eliminar item
+  const removeItem = (itemId, itemType) => {
+    setPlaylistItems(playlistItems.filter(item => item.id !== itemId));
     
-    if (isFavorite) {
-      // Quitar de favoritos
-      updatedFavorites = favorites.filter(f => f.id !== track.id);
-    } else {
-      // Añadir a favoritos
-      updatedFavorites = [...favorites, track];
-    }
-    
-    setFavorites(updatedFavorites);
-    localStorage.setItem('favorite_tracks', JSON.stringify(updatedFavorites));
-    
-    // Actualizar la playlist para reflejar el cambio
-    // Si añadimos favorito y no está en playlist, lo añadimos al principio
-    if (!isFavorite && !playlist.find(p => p.id === track.id)) {
-      setPlaylist([track, ...playlist]);
+    if (itemType === 'track') {
+      setSelectedTracks(selectedTracks.filter(track => track.id !== itemId));
+    } else if (itemType === 'artist') {
+      setSelectedArtists(selectedArtists.filter(artist => artist.id !== itemId));
     }
   };
 
-  const isFavorite = (trackId) => {
-    return favorites.some(f => f.id === trackId);
+  // Función para marcar/desmarcar favorito
+  const toggleFavorite = (item) => {
+    if (item.type === 'track') {
+      const isFavorite = favoriteTracks.find(f => f.id === item.id);
+      let updatedFavorites;
+      
+      if (isFavorite) {
+        updatedFavorites = favoriteTracks.filter(f => f.id !== item.id);
+      } else {
+        updatedFavorites = [...favoriteTracks, item];
+      }
+      
+      setFavoriteTracks(updatedFavorites);
+      localStorage.setItem('favorite_tracks', JSON.stringify(updatedFavorites));
+      
+      if (!isFavorite && !playlistItems.find(p => p.id === item.id)) {
+        setPlaylistItems([{ ...item, type: 'track' }, ...playlistItems]);
+      }
+    } else if (item.type === 'artist') {
+      const isFavorite = favoriteArtists.find(f => f.id === item.id);
+      let updatedFavorites;
+      
+      if (isFavorite) {
+        updatedFavorites = favoriteArtists.filter(f => f.id !== item.id);
+      } else {
+        updatedFavorites = [...favoriteArtists, item];
+      }
+      
+      setFavoriteArtists(updatedFavorites);
+      localStorage.setItem('favorite_artists', JSON.stringify(updatedFavorites));
+      
+      if (!isFavorite && !playlistItems.find(p => p.id === item.id)) {
+        setPlaylistItems([{ ...item, type: 'artist' }, ...playlistItems]);
+      }
+    }
+  };
+
+  const isFavorite = (itemId, itemType) => {
+    if (itemType === 'track') {
+      return favoriteTracks.some(f => f.id === itemId);
+    } else if (itemType === 'artist') {
+      return favoriteArtists.some(f => f.id === itemId);
+    }
+    return false;
   };
 
   return (
@@ -131,14 +195,10 @@ export default function DashboardClient({ user }) {
 
         <h2 className="text-xl mt-4">Configuración</h2>
         
-        {/* Esto de aquí son los widgets (lado izquierdo) */}
-        <div className="mb-4 p-3 border border-gray-300">
-          <h3 className="font-bold">Artistas</h3>
-          <p>Seleccionados: {selectedArtists.length}</p>
-          <button className="w-full p-2 bg-green-500 text-white mt-2">
-            Buscar Artistas
-          </button>
-        </div>
+        <WidgetArtistas 
+          selectedArtists={selectedArtists}
+          onArtistsChange={setSelectedArtists}
+        />
 
         <WidgetTracks 
           selectedTracks={selectedTracks}
@@ -146,8 +206,8 @@ export default function DashboardClient({ user }) {
         />
 
         <WidgetGeneros 
-            selectedGenres={selectedGenres}
-            onGenresChange={setSelectedGenres}
+          selectedGenres={selectedGenres}
+          onGenresChange={setSelectedGenres}
         />
 
         <WidgetAgnos 
@@ -165,16 +225,14 @@ export default function DashboardClient({ user }) {
         </button>
       </aside>
 
-      {/* Y esta es la sección donde va la playlist generada (lado derecho) */}
+      {/* Playlist principal */}
       <main className="flex-1">
         <div className="flex justify-between mb-3">
           <h2 className="text-2xl">
-            {playlist.length === favorites.length && playlist.length > 0 
-              ? `Tus Favoritos (${playlist.length})` 
-              : `Tu Playlist (${playlist.length})`}
+            Tu Playlist ({playlistItems.length})
           </h2>
           
-          {playlist.length > 0 && (
+          {playlistItems.length > 0 && (
             <div>
               <button onClick={generatePlaylist} className="p-2 mr-2 border">
                 Refrescar
@@ -186,23 +244,40 @@ export default function DashboardClient({ user }) {
           )}
         </div>
 
-        {playlist.length === 0 ? (
+        {playlistItems.length === 0 ? (
           <div className="text-center p-12 border-2 border-dashed border-gray-300">
-            <p>No tienes favoritos aún. Busca y selecciona canciones o genera una playlist ⭐</p>
+            <p>No tienes favoritos aún. Busca y selecciona canciones o artistas, o genera una playlist ⭐</p>
           </div>
         ) : (
           <ul className="list-none p-0">
-            {playlist.map((track) => (
-              <Cancion
-                key={track.id}
-                artista={track.artists?.map(a => a.name).join(', ')}
-                nombre={track.name}
-                imagen={track.album?.images?.[2]?.url}
-                onFavorite={() => toggleFavorite(track)}
-                onRemove={() => removeTrack(track.id)}
-                isFavorite={isFavorite(track.id)}
-              />
-            ))}
+            {playlistItems.map((item) => {
+              if (item.type === 'track') {
+                return (
+                  <Cancion
+                    key={`track-${item.id}`}
+                    artista={item.artists?.map(a => a.name).join(', ')}
+                    nombre={item.name}
+                    imagen={item.album?.images?.[2]?.url}
+                    onFavorite={() => toggleFavorite(item)}
+                    onRemove={() => removeItem(item.id, 'track')}
+                    isFavorite={isFavorite(item.id, 'track')}
+                  />
+                );
+              } else if (item.type === 'artist') {
+                return (
+                  <Artista
+                    key={`artist-${item.id}`}
+                    nombre={item.name}
+                    imagen={item.images?.[1]?.url}
+                    generos={item.genres?.slice(0, 3).join(', ')}
+                    onFavorite={() => toggleFavorite(item)}
+                    onRemove={() => removeItem(item.id, 'artist')}
+                    isFavorite={isFavorite(item.id, 'artist')}
+                  />
+                );
+              }
+              return null;
+            })}
           </ul>
         )}
       </main>

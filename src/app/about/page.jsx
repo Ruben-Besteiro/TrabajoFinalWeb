@@ -9,8 +9,8 @@ const roboto = Roboto({
 export default function About() {
     return (
         <div className={`${roboto.variable} font-sans`}>
-            <h1>Esta página fue hecha por Rubén Besteiro Gómez</h1>
-            <h1 className="text-3xl font-bold underline text-green-500 hover:text-green-300">Tailwind</h1>
+            <h1>Esta página fue hecha por el grandísimo Untar la Manteca</h1>
+            <h1>también conocido como Rubén Besteiro</h1>
         </div>
     );
 }
