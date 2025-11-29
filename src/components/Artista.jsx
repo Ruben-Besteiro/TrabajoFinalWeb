@@ -16,20 +16,20 @@ export default function Artista({ nombre, imagen, generos, onFavorite, onRemove,
         </div>
       </div>
       
-      <div className="flex gap-2">
+      <div>
         <button
           onClick={onFavorite}
-          className="p-2 hover:bg-gray-200 rounded"
+          className="bg-transparent border-0 text-xl"
           title={isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
         >
           {isFavorite ? '⭐' : '☆'}
         </button>
         <button
           onClick={onRemove}
-          className="p-2 hover:bg-red-100 rounded text-red-600"
+          className="bg-transparent border-0 text-xl"
           title="Eliminar de la playlist"
         >
-          ✖
+          ❌
         </button>
       </div>
     </li>
