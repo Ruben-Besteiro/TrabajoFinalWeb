@@ -39,13 +39,13 @@ export default function DashboardClient({ user }) {
   useEffect(() => {
     const favoriteIds = new Set(favorites.map(f => f.id));
     const selectedIds = new Set(filters.tracks.map(t => t.id));
-
-
-
-
+    
+    // Filtrar tracks seleccionados que no sean favoritos
+    const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id));
+    
     const otherTracks = playlist.filter(t => !favoriteIds.has(t.id) && !selectedIds.has(t.id));
     
-    setPlaylist([...favorites, ...filters.tracks, ...otherTracks]);
+    setPlaylist([...favorites, ...nonFavoriteTracks, ...otherTracks]);
   }, [filters.tracks, favorites]);
 
   // Actualizar playlist cuando cambian artistas seleccionados
@@ -70,7 +70,7 @@ export default function DashboardClient({ user }) {
       
       // Filtrar para evitar duplicados
       const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id));
-      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.has(t.id));
+      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.has(t.id) && !selectedIds.has(t.id));
       
       const otherTracks = playlist.filter(t => 
         !favoriteIds.has(t.id) && !selectedIds.has(t.id) && !artistTrackIds.has(t.id)
@@ -84,7 +84,7 @@ export default function DashboardClient({ user }) {
     }
   }, [filters.artists]);
 
-// ESTO ES CUANDO LE DAMOS AL BOTÓN DE GENERAR PLAYLIST
+  // ESTO ES CUANDO LE DAMOS AL BOTÓN DE GENERAR PLAYLIST
   const generatePlaylist = async () => {
     if (filters.genres.length === 0) {
       alert('Selecciona al menos un género');
@@ -134,7 +134,6 @@ export default function DashboardClient({ user }) {
       setLoading(false);
     }
   };
-
 
   // Eliminar track
   const removeTrack = (trackId) => {
