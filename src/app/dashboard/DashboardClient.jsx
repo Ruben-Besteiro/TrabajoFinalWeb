@@ -93,7 +93,7 @@ export default function DashboardClient({ user }) {
 
     setLoading(true);
     try {
-      // Obtener tracks de artistas seleccionados
+      // Regeneramos los top tracks de los artistas para que no desaparezcan
       const artistTracks = [];
       for (const artist of filters.artists) {
         try {
@@ -117,16 +117,16 @@ export default function DashboardClient({ user }) {
       const data = await response.json();
       const newGeneratedTracks = data.tracks || [];
       
-      // Aquí metemos todos los IDs de las canciones que ya están para no meterlas otra vez
+      // Aquí metemos todos los IDs de las canciones que ya están y hacemos un filter para que no salgan 2 veces
       const existingIds = new Set([...favorites, ...filters.tracks, ...artistTracks].map(t => t.id));
       const uniqueNewGeneratedTracks = newGeneratedTracks.filter(t => !existingIds.has(t.id));
+
+      const nonFavoriteTracks = filters.tracks.filter(t => !existingIds.has(t.id));
+      const nonFavoriteArtistTracks = artistTracks.filter(t => !existingIds.has(t.id));
       
       // La playlist va en orden: Primero los favoritos, luego los tracks que seleccionamos manualmente
       // con los widgets de tracks y artistas, y por último los que generamos con el botón de Generar Playlist
       // (filtrando los duplicados)
-      const nonFavoriteTracks = filters.tracks.filter(t => !existingIds.has(t.id));
-      const nonFavoriteArtistTracks = artistTracks.filter(t => !existingIds.has(t.id));
-      
       setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...uniqueNewGeneratedTracks]);
     } catch (error) {
       console.error('Error generando playlist:', error);
@@ -135,13 +135,13 @@ export default function DashboardClient({ user }) {
     }
   };
 
-  // Eliminar track
+  // Eliminar track (dándole a la X)
   const removeTrack = (trackId) => {
     setPlaylist(playlist.filter(t => t.id !== trackId));
     setFilters(prev => ({ ...prev, tracks: prev.tracks.filter(t => t.id !== trackId) }));
   };
 
-  // Toggle favorito
+  // Toggle favorito (dándole a la estrella)
   const toggleFavorite = (track) => {
     const isFav = favorites.find(f => f.id === track.id);
     const updated = isFav 
@@ -167,8 +167,8 @@ export default function DashboardClient({ user }) {
   return (
     <div className="flex p-5 gap-5">
       <aside className="w-72 border-r border-gray-300 pr-5">
-        <h1 className="text-2xl">Hola, {user.display_name}!</h1>
-        <h2 className="text-xl mt-4">Configuración</h2>
+        <h1 className="text-2xl">¡Hola, {user.display_name}!</h1>
+        <h2 className="text-xl mt-4">Widgets</h2>
 
         <WidgetTracks 
           selectedTracks={filters.tracks}
@@ -206,17 +206,6 @@ export default function DashboardClient({ user }) {
               ? `Tus Favoritos (${playlist.length})` 
               : `Tu Playlist (${playlist.length})`}
           </h2>
-          
-          {playlist.length > 0 && (
-            <div>
-              <button onClick={generatePlaylist} className="p-2 mr-2 border">
-                Refrescar
-              </button>
-              <button onClick={generatePlaylist} className="p-2 border">
-                Añadir más
-              </button>
-            </div>
-          )}
         </div>
 
         {playlist.length === 0 ? (

@@ -18,9 +18,6 @@ export default function WidgetAgnos({ selectedYears, onYearsChange }) {
   return (
     <div className="mb-4 p-3 border border-gray-300">
       <h3 className="font-bold">Años</h3>
-      <p className="text-sm mb-2">
-        Rango: {selectedYears[0]} - {selectedYears[1]}
-      </p>
       
       <div className="mb-3">
          {/* Hay 2 sliders: uno para el min y otro para el max */}

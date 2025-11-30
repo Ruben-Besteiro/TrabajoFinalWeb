@@ -10,7 +10,7 @@ export default function About() {
     return (
         <div className={`${roboto.variable} font-sans`}>
             <h1>Esta página fue hecha por el grandísimo Untar la Manteca</h1>
-            <h1>también conocido como Rubén Besteiro</h1>
+            <h2>también conocido como Rubén Besteiro</h2>
         </div>
     );
 }
