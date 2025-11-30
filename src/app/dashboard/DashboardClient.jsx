@@ -5,6 +5,7 @@ import WidgetGeneros from '../../components/WidgetGeneros';
 import WidgetAgnos from '../../components/WidgetAgnos';
 import WidgetTracks from '../../components/WidgetTracks';
 import Cancion from '../../components/Cancion';
+import WidgetArtistas from '@/components/WidgetArtistas';
 
 export default function DashboardClient({ user }) {
   if (!user) {
@@ -99,13 +100,10 @@ export default function DashboardClient({ user }) {
         <h1 className="text-2xl">Hola, {user.display_name}!</h1>
         <h2 className="text-xl mt-4">Configuración</h2>
         
-        <div className="mb-4 p-3 border border-gray-300">
-          <h3 className="font-bold">Artistas</h3>
-          <p>Seleccionados: {filters.artists.length}</p>
-          <button className="w-full p-2 bg-green-500 text-white mt-2">
-            Buscar Artistas
-          </button>
-        </div>
+        <WidgetArtistas
+          selectedArtists={filters.artists}
+          onArtistsChange={(artists) => setFilters(prev => ({ ...prev, artists }))}
+        />
 
         <WidgetTracks 
           selectedTracks={filters.tracks}
