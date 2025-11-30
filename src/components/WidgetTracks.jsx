@@ -11,7 +11,7 @@ export default function WidgetTracks({ selectedTracks, onTracksChange }) {
     if (!searchQuery.trim()) return;
 
     setLoading(true);
-    try {
+    try {       // Aquí la llamada a la API
       const response = await fetch(`/api/search-tracks?q=${encodeURIComponent(searchQuery)}`);
       const data = await response.json();
       setSearchResults(data.tracks || []);
@@ -32,14 +32,14 @@ export default function WidgetTracks({ selectedTracks, onTracksChange }) {
   const toggleTrack = (track) => {
     const isSelected = selectedTracks.find(t => t.id === track.id);
     
-    if (isSelected) {
-      onTracksChange(selectedTracks.filter(t => t.id !== track.id));
-    } else {
+    if (!isSelected) {
       if (selectedTracks.length >= 5) {
         alert('Máximo 5 canciones');
         return;
       }
-      onTracksChange([...selectedTracks, track]);
+      onTracksChange([...selectedTracks, track]);   // Si no está, se añade a la parte de "tracks" de los filters
+    } else {
+      onTracksChange(selectedTracks.filter(t => t.id !== track.id));    // Si está, se quita editando el estado directamente
     }
   };
 

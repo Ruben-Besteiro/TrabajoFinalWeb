@@ -1,4 +1,3 @@
-// src/app/dashboard/page.jsx
 import { cookies } from "next/headers";
 import { router } from "next/navigation";
 import DashboardClient from "./DashboardClient";
@@ -23,6 +22,6 @@ export default async function Dashboard() {
 
   const user = await userResponse.json();
 
-  // La parte del cliente debe ir en otro componente y meterle "use client"
+  // La parte del cliente debe ir en otro componente y meterle 'use client'
   return <DashboardClient user={user} />;
 }

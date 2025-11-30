@@ -75,7 +75,7 @@ export default function DashboardClient({ user }) {
     }
   }, [filters.artists]);
 
-  // Generar playlist
+  // ESTO ES CUANDO LE DAMOS AL BOTÓN DE GENERAR PLAYLIST
   const generatePlaylist = async () => {
     if (filters.genres.length === 0) {
       alert('Selecciona al menos un género');
@@ -84,6 +84,21 @@ export default function DashboardClient({ user }) {
 
     setLoading(true);
     try {
+      // Pillamos las canciones top de los artistas seleccionados
+      const artistTracks = [];
+      for (const artist of filters.artists) {
+        try {
+          const response = await fetch(`/api/artist-top-tracks?artistId=${artist.id}`);
+          const data = await response.json();
+          if (data.tracks) {
+            artistTracks.push(...data.tracks.slice(0, 5));
+          }
+        } catch (error) {
+          console.error('Error obteniendo tracks del artista:', error);
+        }
+      }
+
+      // El botón de Generar Playlist genera canciones con los widgets de géneros y años
       const response = await fetch('/api/generate-playlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -91,12 +106,16 @@ export default function DashboardClient({ user }) {
       });
       
       const data = await response.json();
-      const newTracks = data.tracks || [];
+      const newGeneratedTracks = data.tracks || [];
       
-      const existingIds = new Set([...favorites, ...filters.tracks].map(t => t.id));
-      const uniqueNewTracks = newTracks.filter(t => !existingIds.has(t.id));
+      // Aquí metemos todos los IDs de las canciones que ya están para no meterlas otra vez
+      const existingIds = new Set([...favorites, ...filters.tracks, ...artistTracks].map(t => t.id));
+      const uniqueNewGeneratedTracks = newGeneratedTracks.filter(t => !existingIds.has(t.id));
       
-      setPlaylist([...favorites, ...filters.tracks, ...uniqueNewTracks]);
+      // La playlist va en orden: Primero los favoritos, luego los tracks que seleccionamos manualmente
+      // con los widgets de tracks y artistas, y por último los que generamos con el botón de Generar Playlist
+      // (filtrando los duplicados)
+      setPlaylist([...favorites, ...filters.tracks, ...artistTracks, ...uniqueNewGeneratedTracks]);
     } catch (error) {
       console.error('Error generando playlist:', error);
     } finally {
@@ -167,6 +186,17 @@ export default function DashboardClient({ user }) {
               ? `Tus Favoritos (${playlist.length})` 
               : `Tu Playlist (${playlist.length})`}
           </h2>
+          
+          {playlist.length > 0 && (
+            <div>
+              <button onClick={generatePlaylist} className="p-2 mr-2 border">
+                Refrescar
+              </button>
+              <button onClick={generatePlaylist} className="p-2 border">
+                Añadir más
+              </button>
+            </div>
+          )}
         </div>
 
         {playlist.length === 0 ? (

@@ -12,7 +12,7 @@ export default function Cancion({ artista, nombre, imagen, onFavorite, onRemove,
 
       <div>
         <button 
-          onClick={onFavorite}
+          onClick={onFavorite}      // Estas funciones se definen en el dashboard client
           className="bg-transparent border-0 text-xl"
         >
           {isFavorite ? '⭐' : '☆'}
