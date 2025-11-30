@@ -85,8 +85,8 @@ export default function DashboardClient({ user }) {
     setLoading(true);
     try {
       // Pillamos las canciones top de los artistas seleccionados
-      const artistTracks = [];
-      for (const artist of filters.artists) {
+      const artistTracks = playlist.artistTracks || [];
+      /*for (const artist of filters.artists) {
         try {
           const response = await fetch(`/api/artist-top-tracks?artistId=${artist.id}`);
           const data = await response.json();
@@ -96,7 +96,7 @@ export default function DashboardClient({ user }) {
         } catch (error) {
           console.error('Error obteniendo tracks del artista:', error);
         }
-      }
+      }*/
 
       // El botón de Generar Playlist genera canciones con los widgets de géneros y años
       const response = await fetch('/api/generate-playlist', {
@@ -149,15 +149,15 @@ export default function DashboardClient({ user }) {
       <aside className="w-72 border-r border-gray-300 pr-5">
         <h1 className="text-2xl">Hola, {user.display_name}!</h1>
         <h2 className="text-xl mt-4">Configuración</h2>
-        
-        <WidgetArtistas
-          selectedArtists={filters.artists}
-          onArtistsChange={(artists) => setFilters(prev => ({ ...prev, artists }))}
-        />
 
         <WidgetTracks 
           selectedTracks={filters.tracks}
           onTracksChange={(tracks) => setFilters(prev => ({ ...prev, tracks }))}
+        />
+        
+        <WidgetArtistas
+          selectedArtists={filters.artists}
+          onArtistsChange={(artists) => setFilters(prev => ({ ...prev, artists }))}
         />
 
         <WidgetGeneros 
