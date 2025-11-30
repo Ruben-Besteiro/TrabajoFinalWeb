@@ -39,13 +39,13 @@ export default function DashboardClient({ user }) {
   useEffect(() => {
     const favoriteIds = new Set(favorites.map(f => f.id));
     const selectedIds = new Set(filters.tracks.map(t => t.id));
-    
-    // Filtrar tracks seleccionados que no sean favoritos
-    const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id));
-    
+
+
+
+
     const otherTracks = playlist.filter(t => !favoriteIds.has(t.id) && !selectedIds.has(t.id));
     
-    setPlaylist([...favorites, ...nonFavoriteTracks, ...otherTracks]);
+    setPlaylist([...favorites, ...filters.tracks, ...otherTracks]);
   }, [filters.tracks, favorites]);
 
   // Actualizar playlist cuando cambian artistas seleccionados
@@ -67,16 +67,16 @@ export default function DashboardClient({ user }) {
       const favoriteIds = new Set(favorites.map(f => f.id));
       const selectedIds = new Set(filters.tracks.map(t => t.id));
       const artistTrackIds = new Set(artistTracks.map(t => t.id));
-      
-      // Filtrar para evitar duplicados
-      const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id));
-      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.has(t.id));
-      
+
+
+
+
+
       const otherTracks = playlist.filter(t => 
         !favoriteIds.has(t.id) && !selectedIds.has(t.id) && !artistTrackIds.has(t.id)
       );
       
-      setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...otherTracks]);
+      setPlaylist([...favorites, ...filters.tracks, ...artistTracks, ...otherTracks]);
     };
     
     if (filters.artists.length > 0) {
@@ -124,10 +124,10 @@ export default function DashboardClient({ user }) {
       // La playlist va en orden: Primero los favoritos, luego los tracks que seleccionamos manualmente
       // con los widgets de tracks y artistas, y por último los que generamos con el botón de Generar Playlist
       // (filtrando los duplicados)
-      const nonFavoriteTracks = filters.tracks.filter(t => !existingIds.has(t.id));
-      const nonFavoriteArtistTracks = artistTracks.filter(t => !existingIds.has(t.id));
-      
-      setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...uniqueNewGeneratedTracks]);
+      setPlaylist([...favorites, ...filters.tracks, ...artistTracks, ...uniqueNewGeneratedTracks]);
+
+
+
     } catch (error) {
       console.error('Error generando playlist:', error);
     } finally {
@@ -151,7 +151,7 @@ export default function DashboardClient({ user }) {
     setFavorites(updated);
     localStorage.setItem('favorite_tracks', JSON.stringify(updated));
     
-    // Si añadimos a favoritos, quitarlo de filters.tracks
+    // Si añadimos a favoritos lo quitamos de filters.tracks para que no salga 2 veces
     if (!isFav) {
       setFilters(prev => ({
         ...prev,
@@ -221,7 +221,7 @@ export default function DashboardClient({ user }) {
 
         {playlist.length === 0 ? (
           <div className="text-center p-12 border-2 border-dashed border-gray-300">
-            <p>No tienes favoritos aún. Busca y selecciona canciones o genera una playlist ⭐</p>
+            <p>No tienes nada aún. Puedes seleccionar canciones y artistas manualmente o generar una playlist escogiendo géneros y fechas</p>
           </div>
         ) : (
           <ul className="list-none p-0">
