@@ -136,17 +136,6 @@ export default function DashboardClient({ user }) {
               ? `Tus Favoritos (${playlist.length})` 
               : `Tu Playlist (${playlist.length})`}
           </h2>
-          
-          {playlist.length > 0 && (
-            <div>
-              <button onClick={generatePlaylist} className="p-2 mr-2 border">
-                Refrescar
-              </button>
-              <button onClick={generatePlaylist} className="p-2 border">
-                Añadir más
-              </button>
-            </div>
-          )}
         </div>
 
         {playlist.length === 0 ? (
