@@ -151,8 +151,16 @@ export default function DashboardClient({ user }) {
     setFavorites(updated);
     localStorage.setItem('favorite_tracks', JSON.stringify(updated));
     
-    if (!isFav && !playlist.find(p => p.id === track.id)) {
-      setPlaylist([track, ...playlist]);
+    // Si añadimos a favoritos, quitarlo de filters.tracks
+    if (!isFav) {
+      setFilters(prev => ({
+        ...prev,
+        tracks: prev.tracks.filter(t => t.id !== track.id)
+      }));
+      
+      if (!playlist.find(p => p.id === track.id)) {
+        setPlaylist([track, ...playlist]);
+      }
     }
   };
 
