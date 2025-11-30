@@ -67,16 +67,16 @@ export default function DashboardClient({ user }) {
       const favoriteIds = new Set(favorites.map(f => f.id));
       const selectedIds = new Set(filters.tracks.map(t => t.id));
       const artistTrackIds = new Set(artistTracks.map(t => t.id));
-
-
-
-
-
+      
+      // Filtrar para evitar duplicados
+      const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id));
+      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.has(t.id));
+      
       const otherTracks = playlist.filter(t => 
         !favoriteIds.has(t.id) && !selectedIds.has(t.id) && !artistTrackIds.has(t.id)
       );
       
-      setPlaylist([...favorites, ...filters.tracks, ...artistTracks, ...otherTracks]);
+      setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...otherTracks]);
     };
     
     if (filters.artists.length > 0) {
@@ -84,7 +84,7 @@ export default function DashboardClient({ user }) {
     }
   }, [filters.artists]);
 
-  // ESTO ES CUANDO LE DAMOS AL BOTÓN DE GENERAR PLAYLIST
+// ESTO ES CUANDO LE DAMOS AL BOTÓN DE GENERAR PLAYLIST
   const generatePlaylist = async () => {
     if (filters.genres.length === 0) {
       alert('Selecciona al menos un género');
@@ -124,16 +124,17 @@ export default function DashboardClient({ user }) {
       // La playlist va en orden: Primero los favoritos, luego los tracks que seleccionamos manualmente
       // con los widgets de tracks y artistas, y por último los que generamos con el botón de Generar Playlist
       // (filtrando los duplicados)
-      setPlaylist([...favorites, ...filters.tracks, ...artistTracks, ...uniqueNewGeneratedTracks]);
-
-
-
+      const nonFavoriteTracks = filters.tracks.filter(t => !existingIds.has(t.id));
+      const nonFavoriteArtistTracks = artistTracks.filter(t => !existingIds.has(t.id));
+      
+      setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...uniqueNewGeneratedTracks]);
     } catch (error) {
       console.error('Error generando playlist:', error);
     } finally {
       setLoading(false);
     }
   };
+
 
   // Eliminar track
   const removeTrack = (trackId) => {
