@@ -22,7 +22,7 @@ export default function WidgetAgnos({ selectedYears, onYearsChange }) {
       <div className="mb-3">
          {/* Hay 2 sliders: uno para el min y otro para el max */}
 
-        <label className="text-xs block mb-1">Desde: {selectedYears[0]}</label>
+        <label className="text-sm block mb-1">Desde: {selectedYears[0]}</label>
         <input
           type="range"
           min={1950}
@@ -34,7 +34,7 @@ export default function WidgetAgnos({ selectedYears, onYearsChange }) {
       </div>
 
       <div>
-        <label className="text-xs block mb-1">Hasta: {selectedYears[1]}</label>
+        <label className="text-sm block mb-1">Hasta: {selectedYears[1]}</label>
         <input
           type="range"
           min={1950}
