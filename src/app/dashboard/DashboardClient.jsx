@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import WidgetGeneros from '../../components/WidgetGeneros';
 import WidgetAgnos from '../../components/WidgetAgnos';
 import WidgetTracks from '../../components/WidgetTracks';
+import WidgetArtistas from '../../components/WidgetArtistas';
 import Cancion from '../../components/Cancion';
-import WidgetArtistas from '@/components/WidgetArtistas';
 
 export default function DashboardClient({ user }) {
   if (!user) {
@@ -43,6 +43,37 @@ export default function DashboardClient({ user }) {
     
     setPlaylist([...favorites, ...filters.tracks, ...otherTracks]);
   }, [filters.tracks, favorites]);
+
+  // Actualizar playlist cuando cambian artistas seleccionados
+  useEffect(() => {
+    const fetchArtistTracks = async () => {
+      const artistTracks = [];
+      for (const artist of filters.artists) {
+        try {
+          const response = await fetch(`/api/artist-top-tracks?artistId=${artist.id}`);
+          const data = await response.json();
+          if (data.tracks) {
+            artistTracks.push(...data.tracks.slice(0, 5));
+          }
+        } catch (error) {
+          console.error('Error obteniendo tracks del artista:', error);
+        }
+      }
+      
+      const favoriteIds = new Set(favorites.map(f => f.id));
+      const selectedIds = new Set(filters.tracks.map(t => t.id));
+      const artistTrackIds = new Set(artistTracks.map(t => t.id));
+      const otherTracks = playlist.filter(t => 
+        !favoriteIds.has(t.id) && !selectedIds.has(t.id) && !artistTrackIds.has(t.id)
+      );
+      
+      setPlaylist([...favorites, ...filters.tracks, ...artistTracks, ...otherTracks]);
+    };
+    
+    if (filters.artists.length > 0) {
+      fetchArtistTracks();
+    }
+  }, [filters.artists]);
 
   // Generar playlist
   const generatePlaylist = async () => {
