@@ -46,8 +46,8 @@ export default function DashboardClient({ user }) {
   }, [filters.tracks, favorites]);
 
   // Actualizar playlist cuando cambian artistas seleccionados
-  useEffect(() => {
-    const fetchArtistTracks = async () => {
+  useEffect(async () => {
+    //const fetchArtistTracks = async () => {
       const artistTracks = [];
       // Por cada artista generamos los top tracks
       for (const artist of filters.artists) {
@@ -64,23 +64,24 @@ export default function DashboardClient({ user }) {
       
       // Regeneramos la playlist
       const favoriteIds = favorites.map(f => f.id);
-      const manuallySelectedIds = filters.tracks.map(t => t.id);
+      const manuallySelectedTrackIds = filters.tracks.map(t => t.id);
       const artistTrackIds = artistTracks.map(t => t.id);
       
-      // Esto son los tracks seleccionados con los widgets que no están en lo que tenemos previamente
-      const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.includes(t.id));
-      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.includes(t.id) && !manuallySelectedIds.includes(t.id));
+      // Cuando regerentamos la playlist, filtramos para que si un track vaya a salir por duplicado, no salga
+      const manuallySelectedTracksFiltered = filters.tracks.filter(t => !favoriteIds.includes(t.id));
+      const artistTracksFiltered = artistTracks.filter(t => !favoriteIds.includes(t.id) && !manuallySelectedTrackIds.includes(t.id));
       
-      const generatedTracks = playlist.filter(t => 
-        !favoriteIds.includes(t.id) && !manuallySelectedIds.includes(t.id) && !artistTrackIds.includes(t.id)
+      // Para los generados, vemos todo lo que hay en la playlist menos los favoritos, los manuales y los de artistas
+      const generatedTracksFiltered = playlist.filter(t => 
+        !favoriteIds.includes(t.id) && !manuallySelectedTrackIds.includes(t.id) && !artistTrackIds.includes(t.id)
       );
       
-      setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...generatedTracks]);
-    };
+      setPlaylist([...favorites, ...manuallySelectedTracksFiltered, ...artistTracksFiltered, ...generatedTracksFiltered]);
+    //};
     
-    if (filters.artists.length > 0) {
+    /*if (filters.artists.length > 0) {
       fetchArtistTracks();
-    }
+    }*/
   }, [filters.artists]);
 
 
@@ -210,7 +211,7 @@ export default function DashboardClient({ user }) {
           onYearsChange={(newYears) => changeYears(newYears)}
         />
 
-        <button 
+        <button
           onClick={generatePlaylist}
           disabled={loading}
           className="w-full p-4 bg-green-500 text-white mt-5"
@@ -233,7 +234,7 @@ export default function DashboardClient({ user }) {
         ) : (
           <ul className="list-none p-0">
             {playlist.map((track) => (      // El estado playlist guarda objetos, y aquí se crean los componentes
-              <Cancion
+              <Cancion      // Devuelve un li
                 key={track.id}
                 artista={track.artists?.map(a => a.name).join(', ')}
                 nombre={track.name}
