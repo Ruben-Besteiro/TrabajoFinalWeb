@@ -52,6 +52,7 @@ export default function DashboardClient({ user }) {
   useEffect(() => {
     const fetchArtistTracks = async () => {
       const artistTracks = [];
+      // Por cada artista generamos los top tracks
       for (const artist of filters.artists) {
         try {
           const response = await fetch(`/api/artist-top-tracks?artistId=${artist.id}`);
@@ -64,12 +65,12 @@ export default function DashboardClient({ user }) {
         }
       }
       
-      const favoriteIds = new Set(favorites.map(f => f.id));
-      const selectedIds = new Set(filters.tracks.map(t => t.id));
-      const artistTrackIds = new Set(artistTracks.map(t => t.id));
+      const favoriteIds = favorites.map(f => f.id);
+      const selectedIds = filters.tracks.map(t => t.id);
+      const artistTrackIds = artistTracks.map(t => t.id);
       
-      // Filtrar para evitar duplicados
-      const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id));
+      // Esto son los tracks seleccionados con los widgets manuales que no están en favoritos ni tampoco están en el otro widget
+      const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id) && !artistTrackIds.has(t.id));
       const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.has(t.id) && !selectedIds.has(t.id));
       
       const otherTracks = playlist.filter(t => 
