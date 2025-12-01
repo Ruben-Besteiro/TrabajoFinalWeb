@@ -21,12 +21,7 @@ export default function DashboardClient({ user }) {
   });
 
   // Playlist y favoritos
-  const [playlist, setPlaylist] = useState({
-    favorites: [],
-    manuallySelectedTracks: [],
-    artistTopTracks: [],
-    generatedTracks: []
-  });
+  const [playlist, setPlaylist] = useState([]);
   const [favorites, setFavorites] = useState(() => {
     return JSON.parse(localStorage.getItem('favorite_tracks') || '[]');
   });
@@ -36,6 +31,7 @@ export default function DashboardClient({ user }) {
   useEffect(() => {
     setPlaylist(favorites);
   }, []);
+
 
   // ESTO ES CUANDO LE DAMOS AL BOTÓN DE GENERAR PLAYLIST
   const generatePlaylist = async () => {
@@ -84,12 +80,7 @@ export default function DashboardClient({ user }) {
         !favoriteIds.includes(t.id) && !manuallySelectedTrackIds.includes(t.id) && !artistTrackIds.includes(t.id)
       );
       
-      setPlaylist( {
-        favorites: [...favorites],
-        manuallySelectedTracks: [...manuallySelectedTracksFiltered],
-        artistTopTracks: [...artistTracksFiltered],
-        generatedTracks: [...generatedTracksFiltered]
-      });
+      setPlaylist([...favorites, ...manuallySelectedTracksFiltered, ...artistTracksFiltered, ...generatedTracksFiltered]);
     } catch (error) {
       console.error('Error generando playlist:', error);
     } finally {
