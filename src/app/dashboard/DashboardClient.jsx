@@ -164,9 +164,24 @@ export default function DashboardClient({ user }) {
     }
   };
 
+  const changeTracks = (newTracks) => setFilters(prev => ({
+    ...prev,
+    tracks: newTracks,
+  }));
+
+  const changeArtists = (newArtists) => setFilters(prev => ({
+    ...prev,
+    artists: newArtists,
+  }));
+
   const changeGenres = (newGenres) => setFilters(prev => ({
     ...prev,
     genres: newGenres,
+  }));
+
+  const changeYears = (newYears) => setFilters(prev => ({
+    ...prev,
+    years: newYears,
   }));
 
   return (
@@ -177,18 +192,12 @@ export default function DashboardClient({ user }) {
 
         <WidgetTracks 
           selectedTracks={filters.tracks}
-          onTracksChange={(newTracks) => setFilters(prev => ({    // Las funciones reciben como argumento la nueva lista de X
-            ...prev,
-            tracks: newTracks,
-          }))}
+          onTracksChange={(newTracks) => changeTracks(newTracks)}
         />
         
         <WidgetArtistas
           selectedArtists={filters.artists}
-          onArtistsChange={(newArtists) => setFilters(prev => ({
-            ...prev,
-            artists: newArtists,
-          }))}
+          onArtistsChange={(newArtists) => changeArtists(newArtists)}
         />
 
         <WidgetGeneros 
@@ -198,10 +207,7 @@ export default function DashboardClient({ user }) {
 
         <WidgetAgnos 
           selectedYears={filters.years}
-          onYearsChange={(newYears) => setFilters(prev => ({
-            ...prev,
-            years: newYears
-          }))}
+          onYearsChange={(newYears) => changeYears(newYears)}
         />
 
         <button 
