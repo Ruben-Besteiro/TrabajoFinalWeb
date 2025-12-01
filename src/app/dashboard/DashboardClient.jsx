@@ -128,7 +128,7 @@ export default function DashboardClient({ user }) {
       const artistTracksFiltered = artistTracks.filter(t => !favoriteIds.includes(t.id) && !manuallySelectedTrackIds.includes(t.id));
       
       // Para los generados, vemos todo lo que hay en la playlist menos los favoritos, los manuales y los de artistas
-      const generatedTracksFiltered = playlist.filter(t => 
+      const generatedTracksFiltered = newGeneratedTracks.filter(t => 
         !favoriteIds.includes(t.id) && !manuallySelectedTrackIds.includes(t.id) && !artistTrackIds.includes(t.id)
       );
       
