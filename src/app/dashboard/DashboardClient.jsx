@@ -69,12 +69,12 @@ export default function DashboardClient({ user }) {
       const selectedIds = filters.tracks.map(t => t.id);
       const artistTrackIds = artistTracks.map(t => t.id);
       
-      // Esto son los tracks seleccionados con los widgets manuales que no están en favoritos ni tampoco están en el otro widget
-      const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id) && !artistTrackIds.has(t.id));
-      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.has(t.id) && !selectedIds.has(t.id));
+      // Esto son los tracks seleccionados con los widgets que no están en favoritos
+      const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.includes(t.id));
+      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.includes(t.id) && !selectedIds.includes(t.id));
       
       const otherTracks = playlist.filter(t => 
-        !favoriteIds.has(t.id) && !selectedIds.has(t.id) && !artistTrackIds.has(t.id)
+        !favoriteIds.includes(t.id) && !selectedIds.includes(t.id) && !artistTrackIds.includes(t.id)
       );
       
       setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...otherTracks]);
