@@ -46,8 +46,8 @@ export default function DashboardClient({ user }) {
   }, [filters.tracks, favorites]);
 
   // Actualizar playlist cuando cambian artistas seleccionados
-  useEffect(async () => {
-    //const fetchArtistTracks = async () => {
+  useEffect(() => {
+    (async () => {
       const artistTracks = [];
       // Por cada artista generamos los top tracks
       for (const artist of filters.artists) {
@@ -77,11 +77,10 @@ export default function DashboardClient({ user }) {
       );
       
       setPlaylist([...favorites, ...manuallySelectedTracksFiltered, ...artistTracksFiltered, ...generatedTracksFiltered]);
-    //};
-    
-    /*if (filters.artists.length > 0) {
-      fetchArtistTracks();
-    }*/
+
+    })();
+
+
   }, [filters.artists]);
 
 
