@@ -26,7 +26,7 @@ export default function DashboardClient({ user }) {
     return JSON.parse(localStorage.getItem('favorite_tracks') || '[]');
   });
   const [loading, setLoading] = useState(false);
-  const [GTR, setGTR] = useState(false);
+  const [GTR, setGTR] = useState(false);    // Generación en tiempo real
 
   // Inicializar playlist con favoritos
   useEffect(() => {
@@ -147,17 +147,20 @@ export default function DashboardClient({ user }) {
       <aside className="w-72 border-r border-gray-300 pr-5">
         <h1 className="text-2xl">¡Hola, {user.display_name}!</h1>
 
+        <h2 className="text-xl mt-4">Widgets</h2>
+
         <label>
           <input
             type="checkbox"
             checked={GTR}
-            onChange={() => setGTR(!GTR)}
+            onChange={() => {
+              setGTR(!GTR);
+              generatePlaylist();
+            }}
             className="mr-2"
           />
           <span className="text-sm">Activar generación en tiempo real</span>
         </label>
-
-        <h2 className="text-xl mt-4">Widgets</h2>
 
         <WidgetTracks 
           selectedTracks={filters.tracks}
