@@ -85,12 +85,15 @@ export default function DashboardClient({ user }) {
   }, [filters.artists]);*/
 
 
+  useEffect(() => {
+    (async() => {
+      generatePlaylist();
+    })();
+  }, [filters.tracks, filters.artists, filters.genres, filters.years]);
+
+
   // ESTO ES CUANDO LE DAMOS AL BOTÓN DE GENERAR PLAYLIST
   const generatePlaylist = async () => {
-    if (filters.genres.length === 0) {
-      alert('Selecciona al menos un género');
-    }
-
     setLoading(true);
     try {
       // Regeneramos los top tracks de los artistas para que no desaparezcan
