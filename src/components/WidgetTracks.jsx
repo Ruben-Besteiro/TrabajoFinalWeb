@@ -70,6 +70,7 @@ export default function WidgetTracks({ selectedTracks, onTracksChange }) {
         </button>
       </div>
 
+      {/* Los tracks los metemos en un menú pequeño y si le damos a la checkbox ahí es donde modificamos el estado del padre */}
       {searchResults.length > 0 && (
         <div className="max-h-48 overflow-y-auto border-t pt-2">
           {searchResults.map((track) => (

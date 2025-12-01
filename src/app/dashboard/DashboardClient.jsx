@@ -23,10 +23,7 @@ export default function DashboardClient({ user }) {
   // Playlist y favoritos
   const [playlist, setPlaylist] = useState([]);
   const [favorites, setFavorites] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return JSON.parse(localStorage.getItem('favorite_tracks') || '[]');
-    }
-    return [];
+    return JSON.parse(localStorage.getItem('favorite_tracks') || '[]');
   });
   const [loading, setLoading] = useState(false);
 
@@ -37,15 +34,15 @@ export default function DashboardClient({ user }) {
 
   // Actualizar playlist cuando cambian tracks seleccionados
   useEffect(() => {
-    const favoriteIds = new Set(favorites.map(f => f.id));
-    const selectedIds = new Set(filters.tracks.map(t => t.id));
+    // Los IDs los sacamos para filtrar
+    const favoriteIds = favorites.map(f => f.id);
+    const manuallySelectedIds = filters.tracks.map(t => t.id);
     
-    // Filtrar tracks seleccionados que no sean favoritos
-    const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.has(t.id));
+    // Filtrar tracks seleccionados que no estén en favoritos
+    const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.includes(t.id));
+    const generatedTracks = playlist.filter(t => !favoriteIds.includes(t.id) && !manuallySelectedIds.includes(t.id));
     
-    const otherTracks = playlist.filter(t => !favoriteIds.has(t.id) && !selectedIds.has(t.id));
-    
-    setPlaylist([...favorites, ...nonFavoriteTracks, ...otherTracks]);
+    setPlaylist([...favorites, ...nonFavoriteTracks, ...generatedTracks]);
   }, [filters.tracks, favorites]);
 
   // Actualizar playlist cuando cambian artistas seleccionados
@@ -65,25 +62,27 @@ export default function DashboardClient({ user }) {
         }
       }
       
+      // Regeneramos la playlist
       const favoriteIds = favorites.map(f => f.id);
-      const selectedIds = filters.tracks.map(t => t.id);
+      const manuallySelectedIds = filters.tracks.map(t => t.id);
       const artistTrackIds = artistTracks.map(t => t.id);
       
-      // Esto son los tracks seleccionados con los widgets que no están en favoritos
+      // Esto son los tracks seleccionados con los widgets que no están en lo que tenemos previamente
       const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.includes(t.id));
-      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.includes(t.id) && !selectedIds.includes(t.id));
+      const nonFavoriteArtistTracks = artistTracks.filter(t => !favoriteIds.includes(t.id) && !manuallySelectedIds.includes(t.id));
       
-      const otherTracks = playlist.filter(t => 
-        !favoriteIds.includes(t.id) && !selectedIds.includes(t.id) && !artistTrackIds.includes(t.id)
+      const generatedTracks = playlist.filter(t => 
+        !favoriteIds.includes(t.id) && !manuallySelectedIds.includes(t.id) && !artistTrackIds.includes(t.id)
       );
       
-      setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...otherTracks]);
+      setPlaylist([...favorites, ...nonFavoriteTracks, ...nonFavoriteArtistTracks, ...generatedTracks]);
     };
     
     if (filters.artists.length > 0) {
       fetchArtistTracks();
     }
   }, [filters.artists]);
+
 
   // ESTO ES CUANDO LE DAMOS AL BOTÓN DE GENERAR PLAYLIST
   const generatePlaylist = async () => {
@@ -145,12 +144,12 @@ export default function DashboardClient({ user }) {
   // Toggle favorito (dándole a la estrella)
   const toggleFavorite = (track) => {
     const isFav = favorites.find(f => f.id === track.id);
-    const updated = isFav 
+    const updated = isFav
       ? favorites.filter(f => f.id !== track.id)
       : [...favorites, track];
     
-    setFavorites(updated);
-    localStorage.setItem('favorite_tracks', JSON.stringify(updated));
+    setFavorites(updated);    // Cambiamos el estado
+    localStorage.setItem('favorite_tracks', JSON.stringify(updated));     // Y lo guardamos en localStorage
     
     // Si añadimos a favoritos lo quitamos de filters.tracks para que no salga 2 veces
     if (!isFav) {
@@ -165,6 +164,11 @@ export default function DashboardClient({ user }) {
     }
   };
 
+  const changeGenres = (newGenres) => setFilters(prev => ({
+    ...prev,
+    genres: newGenres,
+  }));
+
   return (
     <div className="flex p-5 gap-5">
       <aside className="w-72 border-r border-gray-300 pr-5">
@@ -173,26 +177,35 @@ export default function DashboardClient({ user }) {
 
         <WidgetTracks 
           selectedTracks={filters.tracks}
-          onTracksChange={(tracks) => setFilters(prev => ({ ...prev, tracks }))}
+          onTracksChange={(newTracks) => setFilters(prev => ({    // Las funciones reciben como argumento la nueva lista de X
+            ...prev,
+            tracks: newTracks,
+          }))}
         />
         
         <WidgetArtistas
           selectedArtists={filters.artists}
-          onArtistsChange={(artists) => setFilters(prev => ({ ...prev, artists }))}
+          onArtistsChange={(newArtists) => setFilters(prev => ({
+            ...prev,
+            artists: newArtists,
+          }))}
         />
 
         <WidgetGeneros 
           selectedGenres={filters.genres}
-          onGenresChange={(genres) => setFilters(prev => ({ ...prev, genres }))}
+          onGenresChange={(newGenres) => changeGenres(newGenres)}
         />
 
         <WidgetAgnos 
           selectedYears={filters.years}
-          onYearsChange={(years) => setFilters(prev => ({ ...prev, years }))}
+          onYearsChange={(newYears) => setFilters(prev => ({
+            ...prev,
+            years: newYears
+          }))}
         />
 
         <button 
-          onClick={generatePlaylist} 
+          onClick={generatePlaylist}
           disabled={loading}
           className="w-full p-4 bg-green-500 text-white mt-5"
         >
@@ -203,9 +216,7 @@ export default function DashboardClient({ user }) {
       <main className="flex-1">
         <div className="flex justify-between mb-3">
           <h2 className="text-2xl">
-            {playlist.length === favorites.length && playlist.length > 0 
-              ? `Tus Favoritos (${playlist.length})` 
-              : `Tu Playlist (${playlist.length})`}
+            {`Tu Playlist (${playlist.length})`}
           </h2>
         </div>
 
@@ -215,7 +226,7 @@ export default function DashboardClient({ user }) {
           </div>
         ) : (
           <ul className="list-none p-0">
-            {playlist.map((track) => (
+            {playlist.map((track) => (      // El estado playlist guarda objetos, y aquí se crean los componentes
               <Cancion
                 key={track.id}
                 artista={track.artists?.map(a => a.name).join(', ')}
