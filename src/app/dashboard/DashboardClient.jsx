@@ -50,7 +50,8 @@ export default function DashboardClient({ user }) {
   // Actualizar playlist cuando cambian artistas seleccionados
   useEffect(() => {
     (async () => {
-      const artistTracks = [];
+      generatePlaylist();
+      /*const artistTracks = [];
       // Por cada artista hacemos una llamada a la API para obtener los top tracks y los metemos en el array
       for (const artist of filters.artists) {
         try {
@@ -80,7 +81,7 @@ export default function DashboardClient({ user }) {
       );
       
       setPlaylist([...favorites, ...manuallySelectedTracksFiltered, ...artistTracksFiltered, ...generatedTracksFiltered]);
-    })();
+ */   })();
   }, [filters.artists]);
 
 
@@ -117,7 +118,7 @@ export default function DashboardClient({ user }) {
       const data = await response.json();
       const newGeneratedTracks = data.tracks || [];
       
-      // Regeneramos la playlist
+      // Regeneramos la playlist (este código es idéntico al del useEffect de artistas)
 
       const favoriteIds = favorites.map(f => f.id);
       const manuallySelectedTrackIds = filters.tracks.map(t => t.id);
