@@ -155,7 +155,6 @@ export default function DashboardClient({ user }) {
             checked={GTR}
             onChange={() => {
               setGTR(!GTR);
-              generatePlaylist();
             }}
             className="mr-2"
           />
