@@ -26,6 +26,7 @@ export default function DashboardClient({ user }) {
     return JSON.parse(localStorage.getItem('favorite_tracks') || '[]');
   });
   const [loading, setLoading] = useState(false);
+  const [GTR, setGTR] = useState(false);
 
   // Inicializar playlist con favoritos
   useEffect(() => {
@@ -33,61 +34,10 @@ export default function DashboardClient({ user }) {
   }, []);
 
   
-  // Actualizar playlist cuando cambian tracks seleccionados
-  /*useEffect(() => {
-    // Los IDs los sacamos para filtrar
-    const favoriteIds = favorites.map(f => f.id);
-    const manuallySelectedIds = filters.tracks.map(t => t.id);
-    
-    // Filtrar tracks seleccionados que no estén en favoritos
-    const nonFavoriteTracks = filters.tracks.filter(t => !favoriteIds.includes(t.id));
-    const generatedTracks = playlist.filter(t => !favoriteIds.includes(t.id) && !manuallySelectedIds.includes(t.id));
-    
-    setPlaylist([...favorites, ...nonFavoriteTracks, ...generatedTracks]);
-  }, [filters.tracks, favorites]);
-
-
-  // Actualizar playlist cuando cambian artistas seleccionados
-  useEffect(() => {
-    (async () => {
-      //generatePlaylist();
-      /*const artistTracks = [];
-      // Por cada artista hacemos una llamada a la API para obtener los top tracks y los metemos en el array
-      for (const artist of filters.artists) {
-        try {
-          const response = await fetch(`/api/artist-top-tracks?artistId=${artist.id}`);
-          const data = await response.json();
-          if (data.tracks) {
-            artistTracks.push(...data.tracks.slice(0, 5));
-          }
-        } catch (error) {
-          console.error('Error obteniendo tracks del artista:', error);
-        }
-      }
-      
-      // Regeneramos la playlist
-
-      const favoriteIds = favorites.map(f => f.id);
-      const manuallySelectedTrackIds = filters.tracks.map(t => t.id);
-      const artistTrackIds = artistTracks.map(t => t.id);
-      
-      // Cuando regerentamos la playlist, filtramos para que si un track vaya a salir por duplicado, no salga
-      const manuallySelectedTracksFiltered = filters.tracks.filter(t => !favoriteIds.includes(t.id));
-      const artistTracksFiltered = artistTracks.filter(t => !favoriteIds.includes(t.id) && !manuallySelectedTrackIds.includes(t.id));
-      
-      // Para los generados, vemos todo lo que hay en la playlist menos los favoritos, los manuales y los de artistas
-      const generatedTracksFiltered = playlist.filter(t => 
-        !favoriteIds.includes(t.id) && !manuallySelectedTrackIds.includes(t.id) && !artistTrackIds.includes(t.id)
-      );
-      
-      setPlaylist([...favorites, ...manuallySelectedTracksFiltered, ...artistTracksFiltered, ...generatedTracksFiltered]);
-    })();
-  }, [filters.artists]);*/
-
-
+  // Generación en tiempo real
   useEffect(() => {
     (async() => {
-      generatePlaylist();
+      if (GTR) generatePlaylist();
     })();
   }, [filters.tracks, filters.artists, filters.genres, filters.years]);
 
@@ -196,6 +146,17 @@ export default function DashboardClient({ user }) {
     <div className="flex p-5 gap-5">
       <aside className="w-72 border-r border-gray-300 pr-5">
         <h1 className="text-2xl">¡Hola, {user.display_name}!</h1>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={GTR}
+            onChange={() => setGTR(!GTR)}
+            className="mr-2"
+          />
+          <span className="text-sm">Activar generación en tiempo real</span>
+        </label>
+
         <h2 className="text-xl mt-4">Widgets</h2>
 
         <WidgetTracks 
