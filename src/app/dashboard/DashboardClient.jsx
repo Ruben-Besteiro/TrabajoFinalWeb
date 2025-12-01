@@ -89,7 +89,6 @@ export default function DashboardClient({ user }) {
   const generatePlaylist = async () => {
     if (filters.genres.length === 0) {
       alert('Selecciona al menos un género');
-      return;
     }
 
     setLoading(true);
