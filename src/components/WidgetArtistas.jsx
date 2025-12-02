@@ -49,7 +49,7 @@ export default function WidgetArtistas({ selectedArtists, onArtistsChange }) {
   };
 
   return (
-    <div className="mb-4 p-3 border border-gray-300 rounded-xs">
+    <div className="mb-4 p-3 border border-gray-300 rounded-s">
       <h3 className="font-bold">Artistas</h3>
       <p className="text-sm mb-2">Seleccionados: {selectedArtists.length}/5</p>
       
@@ -60,12 +60,12 @@ export default function WidgetArtistas({ selectedArtists, onArtistsChange }) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="flex-1 p-2 border text-sm rounded-xs"
+          className="flex-1 p-2 border text-sm rounded-s"
         />
         <button
           onClick={searchArtists}
           disabled={loading}
-          className="p-2 bg-green-500 text-white text-sm rounded-xs"
+          className="p-2 bg-green-500 text-white text-sm rounded-s"
         >
           {loading ? '...' : 'Buscar'}
         </button>

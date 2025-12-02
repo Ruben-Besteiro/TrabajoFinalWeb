@@ -60,7 +60,7 @@ export default function DashboardClient({ user }) {
         }
       }
 
-      // Esta API route utiliza lo que metemos en los widgets de géneros y años
+      // Esta API route utiliza lo que metemos en los widgets de géneros y años (primero se hace una llamada para buscar por género y luego se filtra por año)
       const response = await fetch('/api/generate-playlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -184,7 +184,7 @@ export default function DashboardClient({ user }) {
         <button
           onClick={generatePlaylist}
           disabled={loading}
-          className="w-full p-4 bg-green-500 text-white mt-5"
+          className="w-full p-4 bg-green-500 text-white mt-5 rounded-s"
         >
           {loading ? 'Generando...' : 'Generar Playlist'}
         </button>
@@ -198,7 +198,7 @@ export default function DashboardClient({ user }) {
         </div>
 
         {playlist.length === 0 ? (
-          <div className="text-center p-12 border-2 border-dashed border-gray-300">
+          <div className="text-center p-12 border-2 border-dashed border-gray-300 rounded-s">
             <p>No tienes nada aún. Puedes seleccionar canciones y artistas manualmente o generar una playlist escogiendo géneros y fechas</p>
           </div>
         ) : (
