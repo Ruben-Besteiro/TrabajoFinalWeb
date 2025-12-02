@@ -36,7 +36,7 @@ export default function WidgetGeneros({ selectedGenres, onGenresChange }) {
   };
 
   return (
-    <div className="mb-4 p-3 border border-gray-300">
+    <div className="mb-4 p-3 border border-gray-300 rounded-xs">
       <h3 className="font-bold">Géneros</h3>
       <p className="text-sm mb-2">Seleccionados: {selectedGenres.length}/5</p>
       

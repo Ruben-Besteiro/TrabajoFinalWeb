@@ -16,7 +16,7 @@ export default function WidgetAgnos({ selectedYears, onYearsChange }) {
   };
 
   return (
-    <div className="mb-4 p-3 border border-gray-300">
+    <div className="mb-4 p-3 border border-gray-300 rounded-xs">
       <h3 className="font-bold">Años</h3>
       
       <div className="mb-3">

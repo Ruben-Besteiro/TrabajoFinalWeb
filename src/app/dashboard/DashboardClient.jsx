@@ -60,7 +60,7 @@ export default function DashboardClient({ user }) {
         }
       }
 
-      // El botón de Generar Playlist genera canciones con los widgets de géneros y años
+      // Esta API route utiliza lo que metemos en los widgets de géneros y años
       const response = await fetch('/api/generate-playlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -70,7 +70,7 @@ export default function DashboardClient({ user }) {
       const data = await response.json();
       const newGeneratedTracks = data.tracks || [];
       
-      // Regeneramos la playlist (este código es idéntico al del useEffect de artistas)
+      // Regeneramos la playlist
 
       const favoriteIds = favorites.map(f => f.id);
       const manuallySelectedTrackIds = filters.tracks.map(t => t.id);
