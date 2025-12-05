@@ -95,9 +95,10 @@ export default function DashboardClient({ user }) {
 
   // Eliminar track (dándole a la X)
   const removeTrack = (trackId) => {
-    setPlaylist(playlist.filter(t => t.id !== trackId));
     setFavorites(favorites.filter(t => t.id !== trackId));
+    console.log(favorites);
     localStorage.setItem('favorite_tracks', JSON.stringify(favorites));
+    setPlaylist(playlist.filter(t => t.id !== trackId));
     setFilters(prev => ({ ...prev, tracks: prev.tracks.filter(t => t.id !== trackId) }));
   };
 
