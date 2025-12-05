@@ -97,7 +97,7 @@ export async function POST(request) {
 
         if (!response.ok) {
           console.error(`Error en búsqueda de género ${genre}:`, response.status);
-          continue; // Continuar con el siguiente género
+          continue;
         }
 
         const data = await response.json();
