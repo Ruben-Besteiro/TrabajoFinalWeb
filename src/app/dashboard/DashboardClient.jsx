@@ -143,7 +143,7 @@ export default function DashboardClient({ user }) {
   }));
 
   return (
-    <div className="flex p-5 gap-5">
+    <div className="flex lg:flex-row sm:flex-col p-5 gap-5">
       <aside className="w-72 border-r border-gray-300 pr-5">
         <h1 className="text-2xl">¡Hola, {user.display_name}!</h1>
 
