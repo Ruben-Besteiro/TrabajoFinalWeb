@@ -184,7 +184,7 @@ export default function DashboardClient({ user }) {
         <button
           onClick={generatePlaylist}
           disabled={loading}
-          className="w-full p-4 border-4 border-dashed bg-linear from-green-500 to-green-600 border-green-900 text-white mt-5 mb-5 rounded-sm"
+          className="w-full p-4 font-bold text-xl border-4 bg-linear-to-r from-green-500 to-green-600 border-green-900 text-white mt-5 mb-5 rounded-sm"
         >
           {loading ? 'Generando...' : 'Generar Playlist'}
         </button>
