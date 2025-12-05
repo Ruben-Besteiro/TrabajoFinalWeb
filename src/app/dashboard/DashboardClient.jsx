@@ -143,8 +143,8 @@ export default function DashboardClient({ user }) {
   }));
 
   return (
-    <div className="flex flex-col lg:flex-row p-5 gap-5">
-      <aside className="w-72 border-r border-gray-300 pr-5">
+    <div className="flex sm:flex-col lg:flex-row p-5 gap-5">
+      <aside className="sm:content-cover md:w-72 lg:w-72 border-r border-gray-300 pr-5">
         <h1 className="text-2xl">¡Hola, {user.display_name}!</h1>
 
         <h2 className="text-xl mt-4">Widgets</h2>
