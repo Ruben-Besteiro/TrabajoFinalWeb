@@ -73,7 +73,7 @@ export default function WidgetArtistas({ selectedArtists, onArtistsChange }) {
 
       {searchResults.length > 0 && (
         <div className="max-h-48 overflow-y-auto border-t pt-2">
-          {searchResults.map((artist) => (
+          {searchResults.map((artist) => (      // Hacemos un map y por cada artista creamos un div
             <label key={artist.id} className="flex items-center mb-2 cursor-pointer">
               <input
                 type="checkbox"
