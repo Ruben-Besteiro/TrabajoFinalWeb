@@ -64,7 +64,7 @@ export default function WidgetTracks({ selectedTracks, onTracksChange }) {
         <button
           onClick={searchTracks}
           disabled={loading}
-          className="p-2 bg-green-500 text-white text-sm rounded-sm"
+          className="p-2 border-2 bg-linear-to-r hover:scale-105 from-green-500 to-green-600 border-green-900 text-white text-sm rounded-sm"
         >
           {loading ? '...' : 'Buscar'}
         </button>
