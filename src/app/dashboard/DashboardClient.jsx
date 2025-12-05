@@ -184,7 +184,7 @@ export default function DashboardClient({ user }) {
         <button
           onClick={generatePlaylist}
           disabled={loading}
-          className="w-full p-4 bg-green-500 text-white mt-5 mb-5 rounded-sm"
+          className="w-full p-4 border-4 border-dashed bg-linear from-green-500 to-green-600 border-green-900 text-white mt-5 mb-5 rounded-sm"
         >
           {loading ? 'Generando...' : 'Generar Playlist'}
         </button>
@@ -198,7 +198,7 @@ export default function DashboardClient({ user }) {
         </div>
 
         {playlist.length === 0 ? (
-          <div className="text-center text-lg font-bold p-12 border-4 border-dashed bg-linear from-green-500 to-green-600 border-green-900 rounded-sm">
+          <div className="text-center p-12 border-2 border-dashed border-gray-300 rounded-sm">
             <p>No tienes nada aún. Puedes seleccionar canciones y artistas manualmente o generar una playlist escogiendo géneros y fechas</p>
           </div>
         ) : (
