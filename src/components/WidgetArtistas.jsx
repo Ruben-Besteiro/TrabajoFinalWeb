@@ -53,14 +53,14 @@ export default function WidgetArtistas({ selectedArtists, onArtistsChange }) {
       <h3 className="font-bold">Artistas</h3>
       <p className="text-sm mb-2">Seleccionados: {selectedArtists.length}/5</p>
       
-      <div className="flex bg-green-950 gap-2 mb-2">
+      <div className="flex gap-2 mb-2">
         <input
           type="text"
           placeholder="Buscar artistas..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="flex-1 p-2 border text-sm rounded-sm"
+          className="flex-1 p-2 bg-green-950 border text-sm rounded-sm"
         />
         <button
           onClick={searchArtists}
