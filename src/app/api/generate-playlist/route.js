@@ -4,18 +4,28 @@ import { NextResponse } from "next/server";
 
 async function getValidAccessToken(cookieStore) {
   let accessToken = cookieStore.get("access_token")?.value;
-  
-  if (!accessToken) {
-    return null;
+  let needsRefresh = false;
+
+  // Si no hay token o si el token es inválido, intentar refrescar
+  if (accessToken) {
+    // Hacer una petición de prueba para verificar si el token es válido
+    const testResponse = await fetch("https://api.spotify.com/v1/me", {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    });
+
+    if (testResponse.status === 401) {
+      needsRefresh = true;
+    } else if (testResponse.ok) {
+      // Token válido, devolverlo
+      return { token: accessToken, refreshed: false };
+    }
+  } else {
+    // No hay token, intentar refrescar
+    needsRefresh = true;
   }
 
-  // Hacer una petición de prueba para verificar si el token es válido
-  const testResponse = await fetch("https://api.spotify.com/v1/me", {
-    headers: { Authorization: `Bearer ${accessToken}` }
-  });
-
-  // Si el token expiró, intentar refrescarlo
-  if (testResponse.status === 401) {
+  // Intentar refrescar el token
+  if (needsRefresh) {
     const refreshToken = cookieStore.get("refresh_token")?.value;
     
     if (!refreshToken) {
