@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { router } from "next/navigation";
-import DashboardClient from "./DashboardClient";
+import DashboardClient from "../../components/DashboardClient";
 
 // Esto es SSR 
 export default async function Dashboard() {

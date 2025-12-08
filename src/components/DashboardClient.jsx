@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect/*, Suspense*/ } from 'react';
-import WidgetGeneros from '../../components/WidgetGeneros';
-import WidgetAgnos from '../../components/WidgetAgnos';
-import WidgetTracks from '../../components/WidgetTracks';
-import WidgetArtistas from '../../components/WidgetArtistas';
-import Cancion from '../../components/Cancion';
+import WidgetGeneros from './WidgetGeneros';
+import WidgetAgnos from './WidgetAgnos';
+import WidgetTracks from './WidgetTracks';
+import WidgetArtistas from './WidgetArtistas';
+import Cancion from './Cancion';
 
 export default function DashboardClient({ user }) {
   if (!user) {
