@@ -193,6 +193,7 @@ export default function DashboardClient({ user }) {
         </button>
       </aside>
 
+      <Suspense fallback={<p>Cargando...</p>}>
       <main className="flex-1">
         <div className="flex justify-between mb-3">
           <h2 className="text-2xl">
@@ -220,6 +221,7 @@ export default function DashboardClient({ user }) {
           </ul>
         )}
       </main>
+      </Suspense>
     </div>
   );
 }
