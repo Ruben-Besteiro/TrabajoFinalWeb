@@ -10,7 +10,7 @@ const roboto = Roboto({
 
 export const metadata = {
   title: "Spotify Taste Mixer",
-  description: "Crea playlists personalizadas para añadirlas a Sporigy",
+  description: "Crea playlists personalizadas para Spotify según tus gustos musicales",
   keywords: ["spotify", "music", "playlist", "mixer"],
 };
 
