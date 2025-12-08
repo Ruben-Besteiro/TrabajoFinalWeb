@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { router } from "next/navigation";
 import DashboardClient from "./DashboardClient";
 
+// Esto es SSR 
 export default async function Dashboard() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
@@ -14,6 +15,7 @@ export default async function Dashboard() {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
+    cache: "no-store"
   });
 
   if (!userResponse.ok) {
