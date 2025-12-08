@@ -71,7 +71,6 @@ export default function DashboardClient({ user }) {
       const newGeneratedTracks = data.tracks || [];
       
       // Regeneramos la playlist
-
       const favoriteIds = favorites.map(f => f.id);
       const manuallySelectedTrackIds = filters.tracks.map(t => t.id);
       const artistTrackIds = artistTracks.map(t => t.id);
@@ -187,7 +186,7 @@ export default function DashboardClient({ user }) {
         <button
           onClick={generatePlaylist}
           disabled={loading}
-          className="w-full p-4 font-bold text-xl border-4 bg-linear-to-r hover:scale-105 from-green-500 to-green-600 border-green-900 text-white mt-5 mb-5 rounded-sm"
+          className="w-full p-4 font-bold text-xl border-4 bg-linear-to-r hover:scale-105 from-green-500 to-green-600 border-green-900 text-white active:bg-white active:text-green-900 mt-5 mb-5 rounded-sm"
         >
           {loading ? 'Generando...' : 'Generar Playlist'}
         </button>
