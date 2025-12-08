@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import WidgetGeneros from '../../components/WidgetGeneros';
 import WidgetAgnos from '../../components/WidgetAgnos';
 import WidgetTracks from '../../components/WidgetTracks';
