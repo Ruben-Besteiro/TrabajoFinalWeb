@@ -19,7 +19,6 @@ async function getValidAccessToken(cookieStore) {
       return { token: accessToken, refreshed: false };
     }
   } else {
-    // No hay token, intentar refrescar
     needsRefresh = true;
   }
 
@@ -94,7 +93,7 @@ export async function GET(request) {
 
       const data = await response.json();
       if (data.artists?.items) {
-        allArtists = [...allArtists, ...data.artists.items];
+        allArtists = [...data.artists.items];
       }
     }
 

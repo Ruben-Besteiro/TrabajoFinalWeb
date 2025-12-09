@@ -70,7 +70,7 @@ export async function POST(request) {
   const accessToken = tokenResult.token;
 
   try {
-    const { genres, years, tracks } = await request.json();
+    const { genres, years } = await request.json();   // Esto lo mandamos del dashboard client
     let allTracks = [];
 
 
@@ -108,20 +108,16 @@ export async function POST(request) {
 
     // 3. Filtrar por año SOLO las canciones que NO fueron seleccionadas manualmente
     if (years && years.length === 2 && genres && genres.length > 0) {
-      const manualTrackIds = tracks ? tracks.map(t => t.id) : [];
-      
+
       allTracks = allTracks.filter(track => {
-        // Si es una canción manual, no aplicar filtro de año
-        if (manualTrackIds.includes(track.id)) return true;
-        
-        // Si no, aplicar filtro de año
+        // Aplicar filtro de año
         if (!track.album?.release_date) return false;
         const trackYear = parseInt(track.album.release_date.substring(0, 4));
         return trackYear >= years[0] && trackYear <= years[1];
       });
     }
 
-    // 4. Eliminar duplicados por ID
+    // 4. Eliminar duplicados por ID (esto puede ocurrir cuando sale una canción con 2 géneros)
     const uniqueTracks = Array.from(
       new Map(allTracks.map(track => [track.id, track])).values()
     );
