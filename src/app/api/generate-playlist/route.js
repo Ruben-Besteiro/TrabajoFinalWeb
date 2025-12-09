@@ -101,7 +101,7 @@ export async function POST(request) {
 
         const data = await response.json();
         if (data.tracks?.items) {
-          allTracks = [...allTracks, ...data.tracks.items];
+          allTracks = [...data.tracks.items];
         }
       }
     }
