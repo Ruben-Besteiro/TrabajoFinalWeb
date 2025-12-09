@@ -54,10 +54,12 @@ async function getValidAccessToken(cookieStore) {
   return { token: accessToken, refreshed: false };
 }
 
+// Llamamos a esto cuando queremos utilizar los widgets de géneros y de años
 export async function POST(request) {
   const cookieStore = await cookies();
   const tokenResult = await getValidAccessToken(cookieStore);
 
+  // Si el token no existe
   if (!tokenResult) {
     return NextResponse.json({ 
       error: "No autenticado o sesión expirada",
@@ -71,10 +73,6 @@ export async function POST(request) {
     const { genres, years, tracks } = await request.json();
     let allTracks = [];
 
-    // 1. Añadir primero las canciones seleccionadas manualmente (sin filtros)
-    if (tracks && tracks.length > 0) {
-      allTracks = [...tracks];
-    }
 
     // 2. Buscar por géneros y aplicar filtros
     if (genres && genres.length > 0) {
@@ -99,6 +97,7 @@ export async function POST(request) {
           console.error(`Error en búsqueda de género ${genre}:`, response.status);
           continue;
         }
+
 
         const data = await response.json();
         if (data.tracks?.items) {

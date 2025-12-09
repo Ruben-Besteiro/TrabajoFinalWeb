@@ -99,6 +99,8 @@ export default function DashboardClient({ user }) {
     localStorage.setItem('favorite_tracks', JSON.stringify(updated));
     setPlaylist(playlist.filter(t => t.id !== trackId));
     setFilters(prev => ({ ...prev, tracks: prev.tracks.filter(t => t.id !== trackId) }));
+
+    //filters.tracks.filter(trackId != filters.tracks.id);
   };
 
   // Toggle favorito (dándole a la estrella)
