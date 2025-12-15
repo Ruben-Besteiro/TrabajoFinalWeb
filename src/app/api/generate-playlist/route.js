@@ -1,7 +1,7 @@
-// API route para generar la playlist cuando le damos al botón
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
+// Esta función es necesaria para sacar el token porque si no no nos deja hacer la llamada
 async function getValidAccessToken(cookieStore) {
   let accessToken = cookieStore.get("access_token")?.value;
   let needsRefresh = false;
@@ -55,7 +55,7 @@ async function getValidAccessToken(cookieStore) {
 }
 
 // Llamamos a esto cuando queremos utilizar los widgets de géneros y de años
-export async function POST(request) {
+export async function POST(request) {     // Cuando llamamos a una API route, le mandamos todos los filters
   const cookieStore = await cookies();
   const tokenResult = await getValidAccessToken(cookieStore);
 
@@ -70,7 +70,7 @@ export async function POST(request) {
   const accessToken = tokenResult.token;
 
   try {
-    const { genres, years } = await request.json();   // Esto lo mandamos del dashboard client
+    const { genres, years } = await request.json();   // Request son todos los filters así que hay que hacer desestructuración
     let allTracks = [];
 
 
@@ -98,15 +98,16 @@ export async function POST(request) {
           continue;
         }
 
-
+        
         const data = await response.json();
+        // Al principio allTracks está vacío así que vamos añadiendo las canciones de cada género
         if (data.tracks?.items) {
-          allTracks = [...data.tracks.items];
+          allTracks = [...allTracks, ...data.tracks.items];
         }
       }
     }
 
-    // 3. Filtrar por año SOLO las canciones que NO fueron seleccionadas manualmente
+    // 3. Filtrar por año
     if (years && years.length === 2 && genres && genres.length > 0) {
 
       allTracks = allTracks.filter(track => {

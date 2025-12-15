@@ -21,7 +21,7 @@ export default function DashboardClient({ user }) {
   });
 
   // Playlist y favoritos
-  const [playlist, setPlaylist] = useState([]);
+  const [playlist, setPlaylist] = useState([]);     // Playlist es donde metemos todo
   const [favorites, setFavorites] = useState(() => {
     return JSON.parse(localStorage.getItem('favorite_tracks') || '[]');
   });
