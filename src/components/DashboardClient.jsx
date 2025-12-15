@@ -64,7 +64,10 @@ export default function DashboardClient({ user }) {
       const response = await fetch('/api/generate-playlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(filters)
+        body: JSON.stringify({
+          genres: filters.genres,
+          years: filters.years
+        })
       });
       
       const data = await response.json();

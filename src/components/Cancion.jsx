@@ -1,6 +1,8 @@
 export default function Cancion({ artista, nombre, imagen, onFavorite, onRemove, isFavorite }) {
   return (
     <li className="flex items-center p-3 border-b border-gray-200">
+      {/* Esto es como si fuese un div y vamos creando elementos según qué haya en los props */}
+
       {imagen && (
         <img src={imagen} alt={nombre} className="w-12 h-12" />
       )}

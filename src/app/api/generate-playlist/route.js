@@ -119,13 +119,13 @@ export async function POST(request) {     // Cuando llamamos a una API route, le
     }
 
     // 4. Eliminar duplicados por ID (esto puede ocurrir cuando sale una canción con 2 géneros)
-    const uniqueTracks = Array.from(
-      new Map(allTracks.map(track => [track.id, track])).values()
-    );
+    const uniqueTracks = Object.values(allTracks.reduce((obj, track) => {
+      obj[track.id] = track;      // Usa el ID como clave para asignarle una posición a cada track
+      return obj;
+    }, {}));
 
     // 5. Limitar a 50 canciones
     const limitedTracks = uniqueTracks.slice(0, 50);
-
     const response = NextResponse.json({ tracks: limitedTracks });
     
     // Si el token fue refrescado, actualizar las cookies
