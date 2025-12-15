@@ -34,7 +34,7 @@ export default function DashboardClient({ user }) {
   }, []);
 
   
-  // Generación en tiempo real
+  // Generación en tiempo real cuando tocamos lo que sea (solo si le dimos a la casilla)
   useEffect(() => {
     (async() => {
       if (GTR) generatePlaylist();
@@ -109,12 +109,12 @@ export default function DashboardClient({ user }) {
   // Toggle favorito (dándole a la estrella)
   const toggleFavorite = (track) => {
     const isFav = favorites.find(f => f.id === track.id);
-    const updated = isFav
+    const updatedFavs = isFav
       ? favorites.filter(f => f.id !== track.id)
       : [...favorites, track];
-    
-    setFavorites(updated);    // Cambiamos el estado
-    localStorage.setItem('favorite_tracks', JSON.stringify(updated));     // Y lo guardamos en localStorage
+
+    setFavorites(updatedFavs);    // Cambiamos el estado
+    localStorage.setItem('favorite_tracks', JSON.stringify(updatedFavs));     // Y lo guardamos en localStorage
     
     // Si añadimos a favoritos lo quitamos de filters.tracks para que no salga 2 veces
     if (!isFav) {

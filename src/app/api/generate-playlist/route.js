@@ -70,7 +70,7 @@ export async function POST(request) {     // Cuando llamamos a una API route, le
   const accessToken = tokenResult.token;
 
   try {
-    const { genres, years } = await request.json();   // Request son todos los filters así que hay que hacer desestructuración
+    const { genres, years } = await request.json();
     let allTracks = [];
 
 
