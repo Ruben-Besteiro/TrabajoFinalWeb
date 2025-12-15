@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-/*async function getValidAccessToken(cookieStore) {
+async function getValidAccessToken(cookieStore) {
   let accessToken = cookieStore.get("access_token")?.value;
   let needsRefresh = false;
 
@@ -50,7 +50,7 @@ import { NextResponse } from "next/server";
   }
 
   return { token: accessToken, refreshed: false };
-}*/
+}
 
 export async function GET(request) {
   const cookieStore = await cookies();

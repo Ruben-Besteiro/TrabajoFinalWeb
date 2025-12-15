@@ -46,7 +46,7 @@ export default function DashboardClient({ user }) {
   const generatePlaylist = async () => {
     setLoading(true);
     try {
-      // Regeneramos los top tracks de los artistas para que no desaparezcan
+      // Por cada artista que hayamos guardado generamos sus top-tracks y los metemos en este array
       const artistTracks = [];
       for (const artist of filters.artists) {
         try {
@@ -73,7 +73,7 @@ export default function DashboardClient({ user }) {
       const data = await response.json();
       const newGeneratedTracks = data.tracks || [];
       
-      // Regeneramos la playlist
+      // Los IDs se utilizan solamente para filtrar duplicados
       const favoriteIds = favorites.map(f => f.id);
       const manuallySelectedTrackIds = filters.tracks.map(t => t.id);
       const artistTrackIds = artistTracks.map(t => t.id);

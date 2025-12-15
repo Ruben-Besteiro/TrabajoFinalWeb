@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-// Esta función es necesaria para sacar el token porque si no no nos deja hacer la llamada
+// Esta función es necesaria para sacar el token porque si no no nos deja hacer la llamada (siempre que tocamos algún widget llamamos a esto)
 async function getValidAccessToken(cookieStore) {
   let accessToken = cookieStore.get("access_token")?.value;
   let needsRefresh = false;

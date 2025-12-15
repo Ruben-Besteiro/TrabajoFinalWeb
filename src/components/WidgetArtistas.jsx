@@ -29,7 +29,6 @@ export default function WidgetArtistas({ selectedArtists, onArtistsChange }) {
   };
 
   // Esto es absolutamente todo igual que el widget de tracks
-  // (en el dashboard client hay un use effect para que nos genere los top tracks y los añada automáticamente)
   const toggleArtist = (artist) => {
     const isSelected = selectedArtists.find(a => a.id === artist.id);
     
