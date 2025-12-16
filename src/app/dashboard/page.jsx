@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { router } from "next/navigation";
 import DashboardClient from "../../components/DashboardClient";
+import { Suspense } from "react";
 
 // Esto es SSR 
 export default async function Dashboard() {
@@ -25,5 +26,9 @@ export default async function Dashboard() {
   const user = await userResponse.json();
 
   // La parte del cliente debe ir en otro componente y meterle 'use client'
-  return <DashboardClient user={user} />;
+  return (
+    <Suspense fallback={"<p>Cargando</p>"}>
+      <DashboardClient user={user} />
+    </Suspense>
+  )
 }
