@@ -78,7 +78,7 @@ export default function DashboardClient({ user }) {
       const manuallySelectedTrackIds = filters.tracks.map(t => t.id);
       const artistTrackIds = artistTracks.map(t => t.id);
       
-      // Cuando regerentamos la playlist, filtramos para que si un track vaya a salir por duplicado, no salga
+      // Cuando regeneramos la playlist, filtramos para que si un track vaya a salir por duplicado, no salga
       const manuallySelectedTracksFiltered = filters.tracks.filter(t => !favoriteIds.includes(t.id));
       const artistTracksFiltered = artistTracks.filter(t => !favoriteIds.includes(t.id) && !manuallySelectedTrackIds.includes(t.id));
       
